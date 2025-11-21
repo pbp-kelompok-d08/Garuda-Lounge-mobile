@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:garuda_lounge_mobile/widgets/card.dart';
+import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
 
-  const Color red = Color(0xFFAA1515);     // Primary: #AA1515
-  const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF
-  const Color cream = Color(0xFFE7E3DD);  // Background/Surface: #E7E3DD
-  const Color black = Color(0xFF111111);
+const Color red = Color(0xFFAA1515);     // Primary: #AA1515
+const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF
+const Color cream = Color(0xFFE7E3DD);  // Background/Surface: #E7E3DD
+const Color black = Color(0xFF111111);
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
@@ -12,11 +14,11 @@ class MyHomePage extends StatelessWidget {
   // final String kelas = "B"; //kelas
 
   final List<ItemHomepage> items = [
-    ItemHomepage("Lihat News", Icons.newspaper),
-    ItemHomepage("Lihat Merch", Icons.shopping_bag),
-    ItemHomepage("Lihat Match", Icons.sports_soccer),
-    ItemHomepage("Lihat Player Aktif", Icons.person),
-    ItemHomepage("Lihat Player Legend", Icons.person_outline_outlined),
+    ItemHomepage("Baca Berita Menarik", Icons.newspaper),
+    ItemHomepage("Koleksi Merchandise", Icons.shopping_bag),
+    ItemHomepage("Jadwal Pertandingan", Icons.sports_soccer),
+    ItemHomepage("Daftar Pemain Aktif", Icons.person),
+    ItemHomepage("Galeri Pemain Legend", Icons.person_outline_outlined),
   ];
 
   @override
@@ -36,6 +38,9 @@ class MyHomePage extends StatelessWidget {
         // Warna latar belakang AppBar diambil dari skema warna tema aplikasi.
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
+
+      drawer: LeftDrawer(),
+
       // Body halaman dengan padding di sekelilingnya.
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -142,58 +147,4 @@ class ItemHomepage {
  final IconData icon;
 
  ItemHomepage(this.name, this.icon);
-}
-
-class ItemCard extends StatelessWidget {
-  // Menampilkan kartu dengan ikon dan nama.
-
-  final ItemHomepage item; 
-
-  const ItemCard(this.item, {super.key}); 
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      // Menentukan warna latar belakang dari tema aplikasi.
-      color: Theme.of(context).colorScheme.secondary,
-      // Membuat sudut kartu melengkung.
-      borderRadius: BorderRadius.circular(12),
-
-      child: InkWell(
-        // Aksi ketika kartu ditekan.
-        onTap: () {
-          // Menampilkan pesan SnackBar saat kartu ditekan.
-          ScaffoldMessenger.of(context)
-            ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(content: Text("Kamu telah menekan tombol ${item.name}!"))
-            );
-        },
-        // Container untuk menyimpan Icon dan Text
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          child: Center(
-            child: Column(
-              // Menyusun ikon dan teks di tengah kartu.
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  item.icon,
-                  color: Colors.white,
-                  size: 30.0,
-                ),
-                const Padding(padding: EdgeInsets.all(3)),
-                Text(
-                  item.name,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
 }
