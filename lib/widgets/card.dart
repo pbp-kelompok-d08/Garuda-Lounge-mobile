@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/screens/menu.dart';
 
+const Color red = Color(0xFFAA1515);     // Primary: #AA1515
+const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF
+const Color cream = Color(0xFFE7E3DD);  // Background/Surface: #E7E3DD
+const Color black = Color(0xFF111111);
+const Color gray = Color(0xFF374151);
+
 class ItemCard extends StatelessWidget {
   // Menampilkan kartu dengan ikon dan nama.
 
@@ -12,7 +18,7 @@ class ItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       // Menentukan warna latar belakang dari tema aplikasi.
-      color: Theme.of(context).colorScheme.secondary,
+      color: Theme.of(context).colorScheme.primary,
       // Membuat sudut kartu melengkung.
       borderRadius: BorderRadius.circular(12),
 
@@ -49,14 +55,14 @@ class ItemCard extends StatelessWidget {
               children: [
                 Icon(
                   item.icon,
-                  color: Colors.white,
+                  color: white,
                   size: 30.0,
                 ),
                 const Padding(padding: EdgeInsets.all(3)),
                 Text(
                   item.name,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: white),
                 ),
               ],
             ),

@@ -9,9 +9,6 @@ const Color black = Color(0xFF111111);
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
-  // final String nama = "Lionel Messi"; //nama
-  // final String npm = "2406275678"; //npm
-  // final String kelas = "B"; //kelas
 
   final List<ItemHomepage> items = [
     ItemHomepage("Baca Berita Menarik", Icons.newspaper),
@@ -36,7 +33,7 @@ class MyHomePage extends StatelessWidget {
           ),
         ),
         // Warna latar belakang AppBar diambil dari skema warna tema aplikasi.
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.secondary,
       ),
 
       drawer: LeftDrawer(),

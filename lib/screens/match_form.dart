@@ -4,6 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
 import 'package:flutter/services.dart'; // untuk formatters
 
+const Color red = Color(0xFFAA1515);     // Primary: #AA1515
+const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF
+const Color cream = Color(0xFFE7E3DD);  // Background/Surface: #E7E3DD
+const Color black = Color(0xFF111111);
+const Color gray = Color(0xFF374151);
+
 class MatchFormPage extends StatefulWidget {
     const MatchFormPage({super.key});
 
@@ -14,7 +20,7 @@ class MatchFormPage extends StatefulWidget {
 class _MatchFormPage extends State<MatchFormPage> {
   final _formKey = GlobalKey<FormState>();
 
-  String _jenis_pertandingan = ""; // default
+  String _jenis_pertandingan = "pertandingan persahabatan"; // default
 
   String _tim_tuan_rumah = "";
   String _tim_tamu = "";
@@ -83,11 +89,14 @@ class _MatchFormPage extends State<MatchFormPage> {
       appBar: AppBar(
         title: const Center(
           child: Text(
-            'Add News Form',
+            'Form Tambah Pertandingan',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
-        backgroundColor: Colors.indigo,
-        foregroundColor: Colors.white,
+        backgroundColor: white,
+        foregroundColor: red,
       ),
 
       drawer: LeftDrawer(),
@@ -925,7 +934,7 @@ class _MatchFormPage extends State<MatchFormPage> {
                   child: ElevatedButton(
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all(Colors.indigo),
+                          MaterialStateProperty.all(red),
                     ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
