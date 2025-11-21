@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:garuda_lounge_mobile/screens/match_form.dart';
 import 'package:garuda_lounge_mobile/screens/menu.dart';
+
+const Color red = Color(0xFFAA1515);     // Primary: #AA1515
+const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF
+const Color cream = Color(0xFFE7E3DD);  // Background/Surface: #E7E3DD
+const Color black = Color(0xFF111111);
+const Color gray = Color(0xFF374151);
+String halamanDipilih = "Home";
 
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
@@ -10,10 +18,13 @@ class LeftDrawer extends StatelessWidget {
       child: ListView(
         children: [
           const DrawerHeader(
+            margin: EdgeInsets.zero, 
+            padding: EdgeInsets.all(16.0),
             decoration: BoxDecoration(
-            color: Colors.blue,
+              color: white,
             ),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center, 
               children: [
                 Text(
                   'GarudaLounge',
@@ -21,16 +32,19 @@ class LeftDrawer extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: red,
                   ),
                 ),
-                Padding(padding: EdgeInsets.all(10)),
-                Text("Semua tentang Timnas ada di sini!",
-                textAlign: TextAlign.center,
+                
+                SizedBox(height: 6), 
+                
+                Text(
+                  "Semua tentang Timnas ada di sini!",
+                  textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.white,
+                    fontSize: 14, // Sedikit dikecilkan agar proporsional
+                    fontWeight: FontWeight.w600, // Medium weight terlihat lebih modern
+                    color: gray,
                   ),
                 ),
               ],
@@ -38,10 +52,21 @@ class LeftDrawer extends StatelessWidget {
           ),
 
           ListTile(
-            leading: const Icon(Icons.home_outlined),
-            title: const Text('Home'),
+            leading: const Icon(
+              Icons.home,
+              fontWeight: FontWeight.w600,
+            ),
+            title: const Text(
+              'Home',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            iconColor: black,
+            textColor: black,
+            selected: halamanDipilih == "Home",
+            selectedColor: red,
             // Bagian redirection ke MyHomePage
             onTap: () {
+              halamanDipilih = "Home";
               Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
@@ -51,10 +76,21 @@ class LeftDrawer extends StatelessWidget {
           ),
 
           ListTile(
-            leading: const Icon(Icons.post_add),
-            title: const Text('News'),
+            leading: const Icon(
+              Icons.newspaper,
+              fontWeight: FontWeight.w600,
+            ),
+            title: const Text(
+              'News',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            iconColor: black,
+            textColor: black,
+            selected: halamanDipilih == "News",
+            selectedColor: red,
             // Bagian redirection ke halaman News
             onTap: () {
+              halamanDipilih = "News";
               /*
               TODO: Buatlah routing buat menampilkan daftar News
               */
@@ -62,10 +98,21 @@ class LeftDrawer extends StatelessWidget {
           ),
           
           ListTile(
-            leading: const Icon(Icons.post_add),
-            title: const Text('Merchandise'),
+            leading: const Icon(
+              Icons.shopping_bag,
+              fontWeight: FontWeight.w600,
+            ),
+            title: const Text(
+              'Merchandise',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            iconColor: black,
+            textColor: black,
+            selected: halamanDipilih == "Merchandise",
+            selectedColor: red,
             // Bagian redirection ke halaman Merchandise
             onTap: () {
+              halamanDipilih = "Merchandise";
               /*
               TODO: Buatlah routing buat menampilkan daftar Merchandise
               */
@@ -73,21 +120,52 @@ class LeftDrawer extends StatelessWidget {
           ),
 
           ListTile(
-            leading: const Icon(Icons.post_add),
-            title: const Text('Match'),
+            leading: const Icon(
+              Icons.sports_soccer,
+              fontWeight: FontWeight.w600,
+            ),
+            title: const Text(
+              'Match',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            iconColor: black,
+            textColor: black,
+            selected: halamanDipilih == "Match",
+            selectedColor: red,
             // Bagian redirection ke halaman match
             onTap: () {
+              halamanDipilih = "Match";
               /*
               TODO: Buatlah routing buat menampilkan daftar match
               */
+
+              // ini buat nyoba aja btw
+              // mungkin kalau mau tambah match, bisa dibikin button gitu di halaman daftar match
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MatchFormPage(),
+                )
+              );
             },
           ),
 
           ListTile(
-            leading: const Icon(Icons.post_add),
-            title: const Text('Pemain Aktif'),
+            leading: const Icon(
+              Icons.person,
+              fontWeight: FontWeight.w600,
+            ),
+            title: const Text(
+              'Pemain Aktif',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            iconColor: black,
+            textColor: black,
+            selected: halamanDipilih == "Pemain Aktif",
+            selectedColor: red,
             // Bagian redirection ke halaman Pemain Aktif
             onTap: () {
+              halamanDipilih = "Pemain Aktif";
               /*
               TODO: Buatlah routing buat menampilkan daftar Pemain Aktif
               */
@@ -95,10 +173,21 @@ class LeftDrawer extends StatelessWidget {
           ),
 
           ListTile(
-            leading: const Icon(Icons.post_add),
-            title: const Text('Pemain Legend'),
+            leading: const Icon(
+              Icons.person_outline_outlined,
+              fontWeight: FontWeight.w600,
+            ),
+            title: const Text(
+              'Pemain Legend',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            iconColor: black,
+            textColor: black,
+            selected: halamanDipilih == "Pemain Legend",
+            selectedColor: red,
             // Bagian redirection ke halaman Pemain Legend
             onTap: () {
+              halamanDipilih = "Pemain Legend";
               /*
               TODO: Buatlah routing buat menampilkan daftar Pemain Legend
               */
