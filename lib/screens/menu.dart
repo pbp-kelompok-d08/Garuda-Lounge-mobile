@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garuda_lounge_mobile/widgets/card.dart';
+import 'package:garuda_lounge_mobile/widgets/homepage_card.dart';
 import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
 
 const Color red = Color(0xFFAA1515);     // Primary: #AA1515
