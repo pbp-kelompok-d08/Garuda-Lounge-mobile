@@ -42,11 +42,7 @@ Menampilkan informasi tentang pemain-pemain legendaris yang pernah membela Timna
 Setiap pemain akan punya halaman profil sendiri berisi biografi singkat dan pencapaian kariernya.
 
 ## Deskripsi Role Pengguna
-Aplikasi kami memiliki dua jenis pengguna utama:
-1. Admin
-Dapat menambah, mengubah, dan menghapus data pada seluruh modul (profil, berita, merchandise, dan pemain legend).
-Bertanggung jawab menjaga agar konten di aplikasi selalu up to date dan relevan.
-2. User Biasa (Pengunjung)
+Aplikasi kami memiliki astu jenis pengguna yaitu user biasa (Pengunjung):
 Dapat membaca berita, melihat profil pemain dan merchandise, serta memberikan komentar pada artikel.
 Tidak memiliki akses untuk mengubah data di aplikasi.
 
