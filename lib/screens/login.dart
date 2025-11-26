@@ -42,12 +42,20 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
         appBar: AppBar(
-            title: const Text('Login'),
+            title: const Text(
+              'GarudaLounge',
+              style: TextStyle(
+              color: red,
+              fontWeight: FontWeight.bold,
+              ),
+            ),
+            backgroundColor: Theme.of(context).colorScheme.secondary,
         ),
         body: Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Card(
+                color: Theme.of(context).colorScheme.secondary,
                 elevation: 8,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12.0),

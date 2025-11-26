@@ -3,6 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
 import 'package:flutter/services.dart'; // untuk formatters
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:garuda_lounge_mobile/screens/menu.dart';
 
 const Color red = Color(0xFFAA1515);     // Primary: #AA1515
 const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF
@@ -22,31 +26,31 @@ class _MatchFormPage extends State<MatchFormPage> {
 
   String _jenis_pertandingan = "pertandingan persahabatan"; // default
 
-  String _tim_tuan_rumah = "";
-  String _tim_tamu = "";
+  String _tim_tuan_rumah = "-";
+  String _tim_tamu = "-";
 
-  String _bendera_tuan_rumah = "";
-  String _bendera_tamu = "";
+  String _bendera_tuan_rumah = "-";
+  String _bendera_tamu = "-";
 
-  String _tanggal = "";
-  String _stadion = "";
+  String _tanggal = "-";
+  String _stadion = "-";
 
   int _skor_tuan_rumah = 0;
   int _skor_tamu = 0;
 
-  String _pencetak_gol_tuan_rumah = "";
-  String _pencetak_gol_tamu = "";
+  String _pencetak_gol_tuan_rumah = "-";
+  String _pencetak_gol_tamu = "-";
 
-  String _starter_tuan_rumah = "";
-  String _starter_tamu = "";
+  String _starter_tuan_rumah = "-";
+  String _starter_tamu = "-";
 
-  String _pengganti_tuan_rumah = "";
-  String _pengganti_tamu = "";
+  String _pengganti_tuan_rumah = "-";
+  String _pengganti_tamu = "-";
 
-  String _manajer_tuan_rumah = "";
-  String _manajer_tamu = "";
+  String _manajer_tuan_rumah = "-";
+  String _manajer_tamu = "-";
 
-  String _highlight = "";
+  String _highlight = "-";
 
   // Statistik
   int _penguasaan_bola_tuan_rumah = 0;
@@ -85,6 +89,7 @@ class _MatchFormPage extends State<MatchFormPage> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         title: const Center(
@@ -528,6 +533,18 @@ class _MatchFormPage extends State<MatchFormPage> {
                       _highlight = value!;
                     });
                   },
+                  validator: (String? value) {
+                    if (value == null || value.isEmpty) {
+                      return "URL Highlight tidak boleh kosong!";
+                    }
+                    if (value.startsWith("https") == false) {
+                      return "URL Highlight tidak valid";
+                    }
+                    if (value.length > 500) {
+                      return "URL Highlight terlalu panjang";
+                    }
+                    return null;
+                  },
                 ),
               ),
 
@@ -936,8 +953,72 @@ class _MatchFormPage extends State<MatchFormPage> {
                       backgroundColor:
                           MaterialStateProperty.all(red),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
+                        // Replace the URL with your app's URL
+                        // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
+                        // If you using chrome,  use URL http://localhost:8000
+                        
+                        final response = await request.postJson(
+                          "http://localhost:8000/create-match-flutter/",
+                          jsonEncode({
+                            "jenis_pertandingan": _jenis_pertandingan,
+                            "tim_tuan_rumah": _tim_tuan_rumah,
+                            "tim_tamu": _tim_tamu,
+                            "bendera_tuan_rumah": _bendera_tuan_rumah,
+                            "bendera_tamu": _bendera_tamu,
+                            "tanggal": _tanggal,
+                            "stadion": _stadion,
+                            "skor_tuan_rumah": _skor_tuan_rumah,
+                            "skor_tamu": _skor_tamu,
+                            "pencetak_gol_tuan_rumah": _pencetak_gol_tuan_rumah,
+                            "pencetak_gol_tamu": _pencetak_gol_tamu,
+                            "starter_tuan_rumah": _starter_tuan_rumah,
+                            "starter_tamu": _starter_tamu,
+                            "pengganti_tuan_rumah": _pengganti_tuan_rumah,
+                            "pengganti_tamu": _pengganti_tamu,
+                            "manajer_tuan_rumah": _manajer_tuan_rumah,
+                            "manajer_tamu": _manajer_tamu,
+                            "highlight": _highlight,
+                            "penguasaan_bola_tuan_rumah": _penguasaan_bola_tuan_rumah,
+                            "penguasaan_bola_tamu": _penguasaan_bola_tamu,
+                            "tembakan_tuan_rumah": _tembakan_tuan_rumah,
+                            "tembakan_tamu": _tembakan_tamu,
+                            "on_target_tuan_rumah": _on_target_tuan_rumah,
+                            "on_target_tamu": _on_target_tamu,
+                            "akurasi_umpan_tuan_rumah": _akurasi_umpan_tuan_rumah,
+                            "akurasi_umpan_tamu": _akurasi_umpan_tamu,
+                            "pelanggaran_tuan_rumah": _pelanggaran_tuan_rumah,
+                            "pelanggaran_tamu": _pelanggaran_tamu,
+                            "kartu_kuning_tuan_rumah": _kartu_kuning_tuan_rumah,
+                            "kartu_kuning_tamu": _kartu_kuning_tamu,
+                            "kartu_merah_tuan_rumah": _kartu_merah_tuan_rumah,
+                            "kartu_merah_tamu": _kartu_merah_tamu,
+                            "offside_tuan_rumah": _offside_tuan_rumah,
+                            "offside_tamu": _offside_tamu,
+                            "corner_tuan_rumah": _corner_tuan_rumah,
+                            "corner_tamu": _corner_tamu,
+                          }),
+                        );
+                        if (context.mounted) {
+                          if (response['status'] == 'success') {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text("Match successfully saved!"),
+                            ));
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MyHomePage()),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text("Something went wrong, please try again."),
+                            ));
+                          }
+                        }
+                      
                         showDialog(
                           context: context,
                           builder: (context) {
