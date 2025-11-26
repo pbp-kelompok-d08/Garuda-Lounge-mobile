@@ -149,7 +149,6 @@ class MatchEntry {
         "highlight": highlight,
         "penguasaan_bola_tuan_rumah": penguasaanBolaTuanRumah,
         "penguasaan_bola_tamu": penguasaanBolaTamu,
-        "penguasaan_bola_tamu": penguasaanBolaTamu,
         "tembakan_tuan_rumah": tembakanTuanRumah,
         "tembakan_tamu": tembakanTamu,
         "on_target_tuan_rumah": onTargetTuanRumah,
