@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/screens/menu.dart';
+import 'package:garuda_lounge_mobile/screens/match_entry_list.dart';
+import 'package:garuda_lounge_mobile/screens/login.dart';
+import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 const Color red = Color(0xFFAA1515);     // Primary: #AA1515
 const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF
@@ -16,6 +21,7 @@ class ItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Material(
       // Menentukan warna latar belakang dari tema aplikasi.
       color: Theme.of(context).colorScheme.primary,
@@ -24,7 +30,7 @@ class ItemCard extends StatelessWidget {
 
       child: InkWell(
         // Aksi ketika kartu ditekan.
-        onTap: () {
+        onTap: () async {
           // Menampilkan pesan SnackBar saat kartu ditekan.
           ScaffoldMessenger.of(context)
           ..hideCurrentSnackBar()
@@ -38,11 +44,54 @@ class ItemCard extends StatelessWidget {
           } else if (item.name == "Koleksi Merchandise") {
             // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Merch
           } else if (item.name == "Jadwal Pertandingan") {
-            // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Match
+            // Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Match
+            halamanDipilih = "Match";
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MatchEntryListPage()
+              ),
+            );
+          } else if (item.name == "Tambah Pertandingan") {
+            // ini nyoba doang 
+            // Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Match
+            halamanDipilih = "Match";
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const MatchEntryListPage()
+              ),
+            );
           } else if (item.name == "Daftar Pemain Aktif") {
             // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Player Aktif
           } else if (item.name == "Galeri Pemain Legend") {
             // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Player Legend
+          } else if (item.name == "Logout") {
+            // Replace the URL with your app's URL and don't forget to add a trailing slash (/)!
+            // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
+            // If you using chrome,  use URL http://localhost:8000
+            
+            final response = await request.logout(
+                "http://localhost:8000/auth/logout/");
+            String message = response["message"];
+            if (context.mounted) {
+              if (response['status']) {
+                  String uname = response["username"];
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text("$message See you again, $uname."),
+                  ));
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+              } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(message),
+                    ),
+                  );
+                }
+            }
           }
         },
         // Container untuk menyimpan Icon dan Text
