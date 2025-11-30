@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/screens/match_form.dart';
 import 'package:garuda_lounge_mobile/screens/menu.dart';
+import 'package:garuda_lounge_mobile/screens/merch_form.dart';
 
 const Color red = Color(0xFFAA1515);     // Primary: #AA1515
 const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF
@@ -116,6 +117,11 @@ class LeftDrawer extends StatelessWidget {
               /*
               TODO: Buatlah routing buat menampilkan daftar Merchandise
               */
+              Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MerchFormPage(),
+                    ));
             },
           ),
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/screens/menu.dart';
+import 'package:garuda_lounge_mobile/screens/merch_form.dart';
 
 const Color red = Color(0xFFAA1515);     // Primary: #AA1515
 const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF
@@ -37,6 +38,11 @@ class ItemCard extends StatelessWidget {
             // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman News
           } else if (item.name == "Koleksi Merchandise") {
             // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Merch
+            Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MerchFormPage(),
+                    ));
           } else if (item.name == "Jadwal Pertandingan") {
             // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Match
           } else if (item.name == "Daftar Pemain Aktif") {
