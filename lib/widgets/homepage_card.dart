@@ -13,19 +13,15 @@ const Color black = Color(0xFF111111);
 const Color gray = Color(0xFF374151);
 
 class ItemCard extends StatelessWidget {
-  // Menampilkan kartu dengan ikon dan nama.
+  final ItemHomepage item;
 
-  final ItemHomepage item; 
-
-  const ItemCard(this.item, {super.key}); 
+  const ItemCard(this.item, {super.key});
 
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
     return Material(
-      // Menentukan warna latar belakang dari tema aplikasi.
       color: Theme.of(context).colorScheme.primary,
-      // Membuat sudut kartu melengkung.
       borderRadius: BorderRadius.circular(12),
 
       child: InkWell(
@@ -33,16 +29,23 @@ class ItemCard extends StatelessWidget {
         onTap: () async {
           // Menampilkan pesan SnackBar saat kartu ditekan.
           ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            SnackBar(content: Text("Kamu telah menekan tombol ${item.name}!"))
-          );
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+                SnackBar(content: Text("Kamu telah menekan tombol ${item.name}!"))
+            );
 
-          // Navigate ke route yang sesuai (tergantung jenis tombol)
+          // Navigate ke page sesuai tombol
           if (item.name == "Baca Berita Menarik") {
-            // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman News
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const NewsEntryListPage(),
+              ),
+            );
+
           } else if (item.name == "Koleksi Merchandise") {
-            // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Merch
+            // TODO: Navigasi ke halaman Merchandise
+
           } else if (item.name == "Jadwal Pertandingan") {
             // Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Match
             halamanDipilih = "Match";
@@ -63,7 +66,8 @@ class ItemCard extends StatelessWidget {
               ),
             );
           } else if (item.name == "Daftar Pemain Aktif") {
-            // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Player Aktif
+            // TODO: Navigasi ke halaman Pemain Aktif
+
           } else if (item.name == "Galeri Pemain Legend") {
             // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Player Legend
           } else if (item.name == "Logout") {
@@ -94,12 +98,11 @@ class ItemCard extends StatelessWidget {
             }
           }
         },
-        // Container untuk menyimpan Icon dan Text
+
         child: Container(
           padding: const EdgeInsets.all(8),
           child: Center(
             child: Column(
-              // Menyusun ikon dan teks di tengah kartu.
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Icon(
@@ -120,5 +123,4 @@ class ItemCard extends StatelessWidget {
       ),
     );
   }
-
 }

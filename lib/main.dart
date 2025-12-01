@@ -14,9 +14,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
+    // Colors from the original code
     const Color red = Color(0xFFAA1515);     // Primary: #AA1515
     const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF
-    const Color cream = Color(0xFFE7E3DD);  // Background/Surface: #E7E3DD
+    const Color cream = Color(0xFFE7E3DD);   // Background/Surface: #E7E3DD
     const Color black = Color(0xFF111111);
     const Color gray = Color(0xFF374151);
     return Provider(
