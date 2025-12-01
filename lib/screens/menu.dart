@@ -83,7 +83,7 @@ class MyHomePage extends StatelessWidget {
                     padding: const EdgeInsets.all(20),
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
-                    crossAxisCount: 5,
+                    crossAxisCount: 4,
                     // Agar grid menyesuaikan tinggi kontennya.
                     shrinkWrap: true,
 
