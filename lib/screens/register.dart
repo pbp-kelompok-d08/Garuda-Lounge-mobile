@@ -71,6 +71,8 @@ class _RegisterPageState extends State<RegisterPage> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
             child: Card(
+              color: Theme.of(context).colorScheme.secondary,
+              shadowColor: Theme.of(context).colorScheme.primary,
               elevation: 8,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.0),

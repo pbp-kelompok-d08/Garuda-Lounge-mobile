@@ -5,6 +5,7 @@ import 'package:garuda_lounge_mobile/screens/login.dart';
 import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:garuda_lounge_mobile/screens/news_entry_list.dart';
 
 const Color red = Color(0xFFAA1515);     // Primary: #AA1515
 const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF

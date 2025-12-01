@@ -73,6 +73,8 @@ class _LoginPageState extends State<LoginPage> {
               maxWidth: 420, // biar mirip card di web
             ),
             child: Card(
+              color: Theme.of(context).colorScheme.secondary,
+              shadowColor: Theme.of(context).colorScheme.primary,
               elevation: 8,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.0),
