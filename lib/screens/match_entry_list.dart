@@ -37,6 +37,7 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    Future<List<MatchEntry>> futureMatches = fetchMatch(request);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -53,7 +54,7 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
       
       
       body: FutureBuilder(
-        future: fetchMatch(request),
+        future: futureMatches,
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.data == null) {
             return const Center(child: CircularProgressIndicator());
@@ -62,7 +63,7 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
               return const Column(
                 children: [
                   Text(
-                    'There are no match in GarudaLounge yet.',
+                    'Belum ada pertandingan di GarudaLounge.',
                     style: TextStyle(fontSize: 20, color: red),
                   ),
                   SizedBox(height: 8),
@@ -71,20 +72,83 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
             } else {
               return ListView.builder(
                 itemCount: snapshot.data!.length,
-                itemBuilder: (_, index) => MatchEntryCard(
-                  match: snapshot.data![index],
-                  onTap: () {
-                    // Navigate to news detail page
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MatchDetailPage(
-                          match: snapshot.data![index],
+                itemBuilder: (_, index) {
+                  final MatchEntry match = snapshot.data![index];
+                  
+                  return MatchEntryCard(
+                    match: match,
+                    
+                    onTap: () {
+                      // Navigate to match detail page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MatchDetailPage(
+                            match: snapshot.data![index],
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
+                      );
+                    },
+
+                    onEditPressed: () {
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute( // navigasi ke form edit
+                      //     builder: (context) => MatchEditPage(match: match),
+                      //   ),
+                      // );
+                      print("edit match");
+                    },
+
+                    onDeletePressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: white,
+                            title:  const Text(
+                              "Hapus Pertandingan",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: red,
+                              ),
+                            ),
+                            content: Text("Apakah kamu yakin ingin menghapus pertandingan:\n${titled(match.jenisPertandingan)} - ${match.timTuanRumah} vs ${match.timTamu} (${match.tanggal})?",
+                                      style: TextStyle(color: black, fontWeight: FontWeight.normal)),
+                            actions: [
+                              TextButton( // jika pilih cancel
+                                onPressed: () {
+                                  Navigator.of(context).pop(); // tutup dialog (batal)
+                                },
+                                child: const Text("Cancel", style: TextStyle(color: gray),),
+                              ),
+
+                              TextButton( // jika pilih delete
+                                onPressed: () async {
+                                  Navigator.of(context).pop(); // tutup dialog dulu
+                                  
+                                  // TODO: panggil fungsi request delete ke server Django
+                                  // await request.post('.../delete/${match.pk}/');
+                                  
+                                  // Jika berhasil, refresh halaman
+                                  setState(() {
+                                    // refresh FutureBuilder
+                                    futureMatches = fetchMatch(request); 
+                                  });
+                                  
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text("Match deleted successfully")),
+                                  );
+                                },
+                                child: const Text("Delete", style: TextStyle(color: red)),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  );
+                }
               );
             }
           }
