@@ -40,7 +40,14 @@ class ItemCard extends StatelessWidget {
           } else if (item.name == "Jadwal Pertandingan") {
             // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Match
           } else if (item.name == "Daftar Pemain Aktif") {
-            // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Player Aktif
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ActivePlayersPage(),
+                ),
+              );
+            },
           } else if (item.name == "Galeri Pemain Legend") {
             // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Player Legend
           }
