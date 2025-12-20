@@ -69,13 +69,16 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
             child: Row(
               children: [
                 ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MatchFormPage(),
-                      ),
+                  onPressed: () async {
+                    final result = await showDialog(
+                      context: context,
+                      builder: (context) => const MatchFormPage(),
                     );
+
+                    // jika result == true, artinya berhasil save, maka refresh halaman
+                    if (result == true) {
+                      setState(() {});
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: red,

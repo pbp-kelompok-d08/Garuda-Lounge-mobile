@@ -73,7 +73,7 @@ class MatchEntryCard extends StatelessWidget {
             ),
           ),
 
-          const Divider(height: 1, thickness: 3, color: red,),
+          const Divider(height: 1, thickness: 2, color: red,),
 
           // body: tim dan skor
           Padding(
