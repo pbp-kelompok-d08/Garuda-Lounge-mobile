@@ -7,12 +7,7 @@ import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:garuda_lounge_mobile/screens/menu.dart';
-
-const Color red = Color(0xFFAA1515);     // Primary: #AA1515
-const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF
-const Color cream = Color(0xFFE7E3DD);  // Background/Surface: #E7E3DD
-const Color black = Color(0xFF111111);
-const Color gray = Color(0xFF374151);
+import 'package:garuda_lounge_mobile/main.dart';
 
 class MatchFormPage extends StatefulWidget {
     const MatchFormPage({super.key});
