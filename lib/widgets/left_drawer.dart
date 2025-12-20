@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/screens/match_form.dart';
 import 'package:garuda_lounge_mobile/screens/menu.dart';
+import 'package:garuda_lounge_mobile/screens/match_entry_list.dart';
+import 'package:garuda_lounge_mobile/screens/news_entry_list.dart';
 
 const Color red = Color(0xFFAA1515);     // Primary: #AA1515
 const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF
@@ -18,13 +20,13 @@ class LeftDrawer extends StatelessWidget {
       child: ListView(
         children: [
           const DrawerHeader(
-            margin: EdgeInsets.zero, 
+            margin: EdgeInsets.zero,
             padding: EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: white,
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center, 
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
                   'GarudaLounge',
@@ -35,9 +37,9 @@ class LeftDrawer extends StatelessWidget {
                     color: red,
                   ),
                 ),
-                
-                SizedBox(height: 6), 
-                
+
+                SizedBox(height: 6),
+
                 Text(
                   "Semua tentang Timnas ada di sini!",
                   textAlign: TextAlign.center,
@@ -68,10 +70,11 @@ class LeftDrawer extends StatelessWidget {
             onTap: () {
               halamanDipilih = "Home";
               Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MyHomePage(),
-                  ));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MyHomePage(),
+                ),
+              );
             },
           ),
 
@@ -94,9 +97,16 @@ class LeftDrawer extends StatelessWidget {
               /*
               TODO: Buatlah routing buat menampilkan daftar News
               */
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NewsEntryListPage(),
+                ),
+              );
             },
           ),
-          
+
           ListTile(
             leading: const Icon(
               Icons.shopping_bag,
@@ -135,17 +145,38 @@ class LeftDrawer extends StatelessWidget {
             // Bagian redirection ke halaman match
             onTap: () {
               halamanDipilih = "Match";
-              /*
-              TODO: Buatlah routing buat menampilkan daftar match
-              */
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MatchEntryListPage(),
+                )
+              );
+            },
+          ),
 
+          ListTile(
+            leading: const Icon(
+              Icons.add,
+              fontWeight: FontWeight.w600,
+            ),
+            title: const Text(
+              'Match',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
+            iconColor: black,
+            textColor: black,
+            selected: halamanDipilih == "Tambah Match",
+            selectedColor: red,
+            // Bagian redirection ke halaman match
+            onTap: () {
+              halamanDipilih = "Tambah Match";
               // ini buat nyoba aja btw
               // mungkin kalau mau tambah match, bisa dibikin button gitu di halaman daftar match
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => MatchFormPage(),
-                )
+                ),
               );
             },
           ),

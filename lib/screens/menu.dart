@@ -17,6 +17,7 @@ class MyHomePage extends StatelessWidget {
     ItemHomepage("Jadwal Pertandingan", Icons.sports_soccer),
     ItemHomepage("Daftar Pemain Aktif", Icons.person),
     ItemHomepage("Galeri Pemain Legend", Icons.person_outline_outlined),
+    ItemHomepage("Logout", Icons.logout),
   ];
 
   @override
@@ -40,7 +41,8 @@ class MyHomePage extends StatelessWidget {
       drawer: LeftDrawer(),
 
       // Body halaman dengan padding di sekelilingnya.
-      body: Padding(
+      body: SingleChildScrollView(
+        child: Padding(
         padding: const EdgeInsets.all(16.0),
         // Menyusun widget secara vertikal dalam sebuah kolom.
         child: Column(
@@ -79,13 +81,16 @@ class MyHomePage extends StatelessWidget {
 
                   // Grid untuk menampilkan ItemCard dalam bentuk grid 3 kolom.
                   GridView.count(
-                    primary: true,
+                    primary: false, // Set false jika menggunakan shrinkWrap/physics custom
                     padding: const EdgeInsets.all(20),
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
-                    crossAxisCount: 5,
+                    crossAxisCount: 4,
                     // Agar grid menyesuaikan tinggi kontennya.
                     shrinkWrap: true,
+
+                    //matikan scroll grid agar ikut scroll halaman utama
+                    physics: const NeverScrollableScrollPhysics(),
 
                     // Menampilkan ItemCard untuk setiap item dalam list items.
                     children: items.map((ItemHomepage item) {
@@ -97,6 +102,7 @@ class MyHomePage extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }  
