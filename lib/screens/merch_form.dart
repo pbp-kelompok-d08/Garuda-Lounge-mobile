@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
+import 'dart:convert';
+import 'package:provider/provider.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:garuda_lounge_mobile/screens/menu.dart';
 
 const Color red = Color(0xFFAA1515);     // Primary: #AA1515
 const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF
@@ -28,13 +32,13 @@ class _MerchFormPageState extends State<MerchFormPage> {
     'Shoes',
     'Ball',
     'GK Gloves',
-    'Ball',
     'Jacket',
     'Scarf',
   ];
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
         title: const Center(
@@ -199,46 +203,38 @@ class _MerchFormPageState extends State<MerchFormPage> {
                       backgroundColor: MaterialStateProperty.all(
                           Theme.of(context).colorScheme.primary),
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         // Tampilkan pop-up
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title:
-                                  const Text('Produk berhasil tersimpan'),
-                              content: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Nama: $_name'),
-                                    Text('Harga: $_price'),
-                                    Text('Deskripsi: $_description'),
-                                    Text('Kategori: $_category'),
-                                    Text('Thumbnail: $_thumbnail'),
-                                    Text('ProductLink: $_productLink'),
-                                  ],
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: const Text('OK'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-
-                                    _formKey.currentState!.reset();
-                                    // Reset nilai state
-                                    setState(() {
-                                      _category = "Jersey";
-                                    });
-                                  },
-                                ),
-                              ],
-                            );
-                          },
+                        final response = await request.postJson(
+                          "http://localhost:8000/merchandise/create-flutter/",
+                          jsonEncode({
+                            "name": _name,
+                            "description": _description,
+                            "price": _price,
+                            "thumbnail": _thumbnail,
+                            "category": _category,
+                            "product_link": _productLink
+                          }),
                         );
+                        if (context.mounted) {
+                          if (response['status'] == 'success') {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text("Merch successfully saved!"),
+                            ));
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MyHomePage()),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text("Something went wrong, please try again."),
+                            ));
+                          }
+                        }
                       }
                     },
                     child: const Text(
