@@ -11,97 +11,125 @@ class NewsEntryCard extends StatelessWidget {
     required this.onTap,
   });
 
+  static const Color red = Color(0xFFAA1515);
+  static const Color cream = Color(0xFFE7E3DD);
+  static const Color black = Color(0xFF111111);
+  static const Color grey = Color(0xFF6B7280);
+
   @override
   Widget build(BuildContext context) {
-    // Warna tema Garuda Lounge
-    const Color red = Color(0xFFAA1515);
-    const Color cream = Color(0xFFE7E3DD);
-    const Color black = Color(0xFF111111);
+    const String baseUrl = 'http://127.0.0.1:8000';
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: InkWell(
-        onTap: onTap,
-        child: Card(
+    final String thumb = news.thumbnail.trim();
+    final String imgUrl =
+        '$baseUrl/news/proxy-image/?url=${Uri.encodeComponent(thumb)}';
+
+    return InkWell(
+      borderRadius: BorderRadius.circular(18),
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
           color: cream,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            side: BorderSide(color: Colors.grey.shade300),
-          ),
-          elevation: 3,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Thumbnail
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(6),
-                  child: Image.network(
-                    // Pastikan endpoint proxy-mu benar
-                    'http://localhost:8000/news/proxy-image/?url=${Uri.encodeComponent(news.thumbnail)}',
-                    height: 150,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      height: 150,
-                      color: Colors.grey[300],
-                      child: const Center(child: Icon(Icons.broken_image)),
-                    ),
-                  ),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: red, width: 1.4),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // IMAGE: fixed height biar nggak kegedean
+            SizedBox(
+              height: 140, // bisa 130–160 sesuai selera
+              child: Image.network(
+                imgUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  color: const Color(0xFFD1D5DB),
+                  child: const Center(child: Icon(Icons.broken_image)),
                 ),
-                const SizedBox(height: 10),
+              ),
+            ),
 
-                // Title
-                Text(
-                  news.title,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.bold,
-                    color: black,
-                  ),
-                ),
-                const SizedBox(height: 6),
-
-                // Category
-                Text(
-                  'Category: ${news.category}',
-                  style: TextStyle(color: black.withOpacity(0.7)),
-                ),
-                const SizedBox(height: 6),
-
-                // Content preview
-                Text(
-                  news.content.length > 100
-                      ? '${news.content.substring(0, 100)}...'
-                      : news.content,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: black.withOpacity(0.5)),
-                ),
-                const SizedBox(height: 8),
-
-                // Featured indicator
-                if (news.isFeatured)
-                  Container(
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
+            // HAPUS Expanded: biar card bisa “ngikut” konten (lebih kompak)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // TITLE lebih pendek
+                  Text(
+                    news.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
                       color: red,
-                      borderRadius: BorderRadius.circular(6),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                      height: 1.2,
                     ),
-                    child: const Text(
-                      'Featured',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                  ),
+                  const SizedBox(height: 6),
+
+                  // META
+                  Text(
+                    news.category,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: grey,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // ✅ CONTENT lebih pendek
+                  Text(
+                    news.content,
+                    maxLines: 6,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: black,
+                      fontSize: 13,
+                      height: 1.3,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  if (news.isFeatured) ...[
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: red,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Text(
+                        'Featured',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
+                    const SizedBox(height: 6),
+                  ],
+
+                  const Text(
+                    'Baca →',
+                    style: TextStyle(
+                      color: red,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 12.5,
+                    ),
                   ),
-              ],
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
