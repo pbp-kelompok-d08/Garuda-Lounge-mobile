@@ -66,30 +66,30 @@ class MatchEntryCard extends StatelessWidget {
                 ),
                 // tanggal
                 Text(
-                  match.tanggal, // Pastikan field tanggal ada di model Anda
-                  style: const TextStyle(color: black, fontSize: 12),
+                  match.tanggal, 
+                  style: const TextStyle(color: black, fontSize: 12, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
           ),
 
-          const Divider(height: 1, thickness: 1.5, color: red,),
+          const Divider(height: 1, thickness: 2, color: red,),
 
           // body: tim dan skor
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                _buildTeamRow(
+                buildTeamRow(
                   context,
                   teamName: match.timTuanRumah,
                   flagUrl: match.benderaTuanRumah,
                   score: match.skorTuanRumah,
                 ),
 
-                const SizedBox(height: 12), // jarak antar tim
+                const SizedBox(height: 15), // jarak antar tim
 
-                _buildTeamRow(
+                buildTeamRow(
                   context,
                   teamName: match.timTamu,
                   flagUrl: match.benderaTamu,
@@ -99,7 +99,7 @@ class MatchEntryCard extends StatelessWidget {
             ),
           ),
 
-          const Divider(height: 1, thickness: 1.5, color: red,),
+          const Divider(height: 1, thickness: 2, color: red,),
 
           // footer action buttons
           Padding(
@@ -122,15 +122,15 @@ class MatchEntryCard extends StatelessWidget {
                 //     Icon(Icons.delete, size: 20, color: Colors.red[300]),
                 //   ],
                 // )
-
+  
                 TextButton(
                   onPressed: onTap, 
                   child: const Text(
-                    "Detail Pertandingan ->",
+                    "Match Details",
                     style: TextStyle(
                       fontWeight: FontWeight.bold, 
-                      color: red,
-                      fontSize: 13,
+                      color: black,
+                      fontSize: 14,
                     ),
                   ),
                 ),
@@ -143,7 +143,7 @@ class MatchEntryCard extends StatelessWidget {
                         "Edit",
                         style: TextStyle(
                           fontWeight: FontWeight.normal, 
-                          color: Color.fromARGB(255, 96, 95, 95), 
+                          color: black, 
                           fontSize: 14,
                         ),
                       ),
@@ -155,7 +155,7 @@ class MatchEntryCard extends StatelessWidget {
                         "Delete",
                         style: TextStyle(
                           fontWeight: FontWeight.normal, 
-                          color: Color.fromARGB(255, 129, 11, 11),
+                          color: Color.fromARGB(255, 224, 13, 13),
                           fontSize: 14,
                         ),
                       ),
@@ -170,9 +170,10 @@ class MatchEntryCard extends StatelessWidget {
     ),
   );
 }
+}
 
 // helper widget untuk membuat baris tiap tim 
-Widget _buildTeamRow(
+Widget buildTeamRow(
   BuildContext context, {
   required String teamName, 
   required String flagUrl, 
@@ -191,11 +192,11 @@ Widget _buildTeamRow(
               child: Image.network(
                 'http://localhost:8000/proxy-image/?url=${Uri.encodeComponent(flagUrl)}',
                 width: 40, 
-                height: 25,
+                height: 40,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Container(
                   width: 40,
-                  height: 25,
+                  height: 40,
                   color: Colors.grey[300],
                   child: const Icon(Icons.broken_image, size: 15),
                 ),
@@ -226,14 +227,13 @@ Widget _buildTeamRow(
       ),
     ],
   );
-  }
 }
 
 String titled(String text) {
-    String result = "";
-    for (String s in text.split(" ")) {
-      result = "$result${s[0].toUpperCase()}${s.substring(1)} ";
-    }
-
-    return result;
+  String result = "";
+  for (String s in text.split(" ")) {
+    result = "$result${s[0].toUpperCase()}${s.substring(1)} ";
   }
+
+  return result;
+}

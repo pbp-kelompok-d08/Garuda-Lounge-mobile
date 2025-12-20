@@ -1,3 +1,4 @@
+// import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/models/match_entry.dart';
 import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
@@ -41,7 +42,7 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Match Entry List',
+          'GarudaLounge',
           style: TextStyle(
           color: red,
           fontWeight: FontWeight.bold,
@@ -128,17 +129,20 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
                                   Navigator.of(context).pop(); // tutup dialog dulu
                                   
                                   // TODO: panggil fungsi request delete ke server Django
-                                  // await request.post('.../delete/${match.pk}/');
+                                  // final response = await request.postJson(
+                                  //   'http://localhost:8000/match/${match.id}/delete_match_flutter/', 
+                                  //   jsonEncode({"id": match.id})
+                                  // );
                                   
-                                  // Jika berhasil, refresh halaman
-                                  setState(() {
-                                    // refresh FutureBuilder
-                                    futureMatches = fetchMatch(request); 
-                                  });
+                                  // // Jika berhasil, refresh halaman
+                                  // setState(() {
+                                  //   // refresh FutureBuilder
+                                  //   futureMatches = fetchMatch(request); 
+                                  // });
                                   
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text("Match deleted successfully")),
-                                  );
+                                  // ScaffoldMessenger.of(context).showSnackBar(
+                                  //   const SnackBar(content: Text("Match deleted successfully")),
+                                  // );
                                 },
                                 child: const Text("Delete", style: TextStyle(color: red)),
                               ),
