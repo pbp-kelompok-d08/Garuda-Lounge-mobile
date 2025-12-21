@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:garuda_lounge_mobile/screens/merch_entry_list.dart';
 import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
@@ -226,7 +227,7 @@ class _MerchFormPageState extends State<MerchFormPage> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => MyHomePage()),
+                                  builder: (context) => MerchEntryListPage()),
                             );
                           } else {
                             ScaffoldMessenger.of(context)

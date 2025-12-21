@@ -1,37 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:garuda_lounge_mobile/models/merch_entry.dart';
+import 'package:garuda_lounge_mobile/models/news_entry.dart';
 import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
-import 'package:garuda_lounge_mobile/screens/merch_detail.dart';
-import 'package:garuda_lounge_mobile/widgets/merch_entry_card.dart';
+import 'package:garuda_lounge_mobile/screens/news_detail.dart';
+import 'package:garuda_lounge_mobile/widgets/news_entry_card.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 
-class MerchEntryListPage extends StatefulWidget {
-  const MerchEntryListPage({super.key});
+class NewsEntryListPage extends StatefulWidget {
+  const NewsEntryListPage({super.key});
 
   @override
-  State<MerchEntryListPage> createState() => _MerchEntryListPageState();
+  State<NewsEntryListPage> createState() => _NewsEntryListPageState();
 }
 
-class _MerchEntryListPageState extends State<MerchEntryListPage> {
-  Future<List<MerchEntry>> fetchMerch(CookieRequest request) async {
+class _NewsEntryListPageState extends State<NewsEntryListPage> {
+  Future<List<NewsEntry>> fetchNews(CookieRequest request) async {
     // TODO: Replace the URL with your app's URL and don't forget to add a trailing slash (/)!
     // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
     // If you using chrome,  use URL http://localhost:8000
-    
-    final response = await request.get('http://localhost:8000/merchandise/json/');
-    
+
+    final response = await request.get('http://localhost:8000/news/json/');
+
     // Decode response to json format
     var data = response;
-    
-    // Convert json data to MerchEntry objects
-    List<MerchEntry> listMerch = [];
+
+    // Convert json data to NewsEntry objects
+    List<NewsEntry> listNews = [];
     for (var d in data) {
       if (d != null) {
-        listMerch.add(MerchEntry.fromJson(d));
+        listNews.add(NewsEntry.fromJson(d));
       }
     }
-    return listMerch;
+    return listNews;
   }
 
   @override
@@ -39,19 +39,11 @@ class _MerchEntryListPageState extends State<MerchEntryListPage> {
     final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'GarudaLounge',
-          style: TextStyle(
-          color: Color(0xFFAA1515),
-          fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: Theme.of(context).colorScheme.secondary,
+        title: const Text('Garuda Lounge News'),
       ),
-
       drawer: const LeftDrawer(),
       body: FutureBuilder(
-        future: fetchMerch(request),
+        future: fetchNews(request),
         builder: (context, AsyncSnapshot snapshot) {
           if (snapshot.data == null) {
             return const Center(child: CircularProgressIndicator());
@@ -60,24 +52,25 @@ class _MerchEntryListPageState extends State<MerchEntryListPage> {
               return const Column(
                 children: [
                   Text(
-                    'There are no merch in here yet.',
-                    style: TextStyle(fontSize: 20, color: Color(0xFFAA1515)),
+                    'There are no news in Garuda Lounge yet.',
+                    style: TextStyle(fontSize: 20, color: Color(0xff59A5D8)),
                   ),
                   SizedBox(height: 8),
                 ],
               );
             } else {
+              // Update the ListView.builder section
               return ListView.builder(
                 itemCount: snapshot.data!.length,
-                itemBuilder: (_, index) => MerchEntryCard(
-                  merch: snapshot.data![index],
+                itemBuilder: (_, index) => NewsEntryCard(
+                  news: snapshot.data![index],
                   onTap: () {
-                    // Show a snackbar when merch card is clicked
+                    // Navigate to news detail page
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MerchDetailPage(
-                          merch: snapshot.data![index],
+                        builder: (context) => NewsDetailPage(
+                          news: snapshot.data![index],
                         ),
                       ),
                     );

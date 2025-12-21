@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/models/merch_entry.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+const Color red = Color(0xFFAA1515);
+const Color white = Color(0xFFFFFFFF);
+const Color cream = Color(0xFFE7E3DD);
+const Color black = Color(0xFF111111);
+const Color gray = Color(0xFF374151);
+
 class MerchDetailPage extends StatelessWidget {
   final MerchEntry merch;
 
@@ -19,8 +25,8 @@ class MerchDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Merch Detail'),
-        backgroundColor: Colors.indigo,
-        foregroundColor: Colors.white,
+        backgroundColor: red,
+        foregroundColor: white,
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -57,14 +63,14 @@ class MerchDetailPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
 
-                  // Category and Date
+                  // Category
                   Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10.0, vertical: 4.0),
+                          vertical: 2.0),
                         decoration: BoxDecoration(
-                          color: Colors.indigo.shade100,
+                          color: cream,
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Text(
@@ -72,7 +78,7 @@ class MerchDetailPage extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: Colors.indigo.shade700,
+                            color: red,
                           ),
                         ),
                       ),
@@ -81,7 +87,7 @@ class MerchDetailPage extends StatelessWidget {
                         'Rp. ${merch.price}',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey[600],
+                          color: gray,
                         ),
                       ),
                     ],
@@ -104,7 +110,14 @@ class MerchDetailPage extends StatelessWidget {
                   // Product Link
                   ElevatedButton(
                     onPressed: _launchURL,
-                    child: const Text("Buy Product"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: red,
+                      foregroundColor: white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10))
+                      )
+                    ),
+                    child: Text("Buy Product"),
                   ),
                 ],
               ),
