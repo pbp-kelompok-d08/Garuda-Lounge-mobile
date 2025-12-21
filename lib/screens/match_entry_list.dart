@@ -181,6 +181,7 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
                           },
 
                           onDeletePressed: () {
+                            // Panggil ini di dalam onDeletePressed
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
@@ -192,130 +193,336 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
                                 final double buttonPadding = screenWidth < 400 ? 10.0 : 14.0;
 
                                 return Dialog(
+                                  // atur margin dialog dari tepi layar
+                                  insetPadding: const EdgeInsets.symmetric(horizontal: 16), 
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                  backgroundColor: Colors.transparent, 
                                   elevation: 0,
-                                  backgroundColor: Colors.white, // atau transparent?
-                                  insetPadding: const EdgeInsets.symmetric(horizontal: 16),
-                                  child: Container(
-                                    constraints: BoxConstraints(
-                                      maxHeight: MediaQuery.of(context).size.height * 0.9,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(16),
-                                      border: Border.all(color: black, width: 2),
-                                      boxShadow: const [
-                                        BoxShadow(color: black, offset: Offset(6, 6), blurRadius: 0),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        // header form
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                                          decoration: const BoxDecoration(
-                                            color: cream,
-                                            borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
-                                            border: Border(bottom: BorderSide(color: gray, width: 1)),
+                                  child: ConstrainedBox(
+                                    constraints: const BoxConstraints(maxWidth: 500), 
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(color: black, width: 2), 
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: black, 
+                                            offset: Offset(6, 6), 
+                                            blurRadius: 0,        
                                           ),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                        ],
+                                      ),
+                                      child: SingleChildScrollView( 
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            // header
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: dynamicPadding, 
+                                                vertical: 16
+                                              ),
+                                              decoration: const BoxDecoration(
+                                                color: cream, 
+                                                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                                                border: Border(bottom: BorderSide(color: gray, width: 1)),
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
-                                                  Text(
-                                                    "Hapus Match Ini?",
-                                                    style: TextStyle(
-                                                        fontSize: 18, fontWeight: FontWeight.w900, color: black),
+                                                  Expanded( // pakai Expanded agar teks tidak nabrak tombol close
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        const Text(
+                                                          "Hapus Pertandingan Ini?",
+                                                          style: TextStyle(
+                                                            fontSize: 25, 
+                                                            fontWeight: FontWeight.w900, 
+                                                            color: black
+                                                          ),
+                                                        ),
+                                                        const SizedBox(height: 4),
+                                                        Text(
+                                                          "Setelah dihapus, tidak bisa dibatalkan.",
+                                                          style: TextStyle(
+                                                            fontSize: 16, 
+                                                            color: black,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  IconButton(
+                                                    icon: const Icon(Icons.close, color: black),
+                                                    onPressed: () => Navigator.pop(context),
+                                                    padding: EdgeInsets.zero, 
+                                                    constraints: const BoxConstraints(),
                                                   ),
                                                 ],
                                               ),
-                                              IconButton(
-                                                icon: const Icon(Icons.close, color: black),
-                                                onPressed: () => Navigator.pop(context),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                                            ),
 
-                                        const SizedBox(height: 16),
-
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: OutlinedButton(
-                                                onPressed: () => Navigator.pop(context),
-                                                style: OutlinedButton.styleFrom(
-                                                  padding: const EdgeInsets.symmetric(vertical: 14),
-                                                  side: const BorderSide(color: black, width: 2),
-                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                                  foregroundColor: black,
-                                                  backgroundColor: white,
-                                                ),
-                                                child: const Text("Cancel", style: TextStyle(fontWeight: FontWeight.bold)),
+                                            // jenis, tim, tanggal pertandingan
+                                            Padding(
+                                              padding: EdgeInsets.all(dynamicPadding),
+                                              child: Column(
+                                                children: [
+                                                  const SizedBox(height: 16),
+                                                  Text(
+                                                    "${titled(match.jenisPertandingan)}\n${match.timTuanRumah} vs ${match.timTamu}",
+                                                    textAlign: TextAlign.center,
+                                                    style: const TextStyle(
+                                                      fontSize: 20, 
+                                                      fontWeight: FontWeight.bold,
+                                                      color: black
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  Text(
+                                                    "Tanggal: ${match.tanggal}",
+                                                    style: const TextStyle(color: gray, fontSize: 18),
+                                                  ),
+                                                ],
                                               ),
                                             ),
 
-                                            const SizedBox(width: 12),
+                                            // footer: action buttons
+                                           Container(
+                                              padding: EdgeInsets.all(dynamicPadding),
+                                              decoration: const BoxDecoration(
+                                                color: cream, 
+                                                borderRadius: BorderRadius.vertical(bottom: Radius.circular(14)), 
+                                                border: Border(top: BorderSide(color: black, width: 1)),
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  // tombol cancel
+                                                  Expanded(
+                                                    child: OutlinedButton(
+                                                      onPressed: () => Navigator.pop(context),
+                                                      style: OutlinedButton.styleFrom(
+                                                        padding: EdgeInsets.symmetric(vertical: buttonPadding),
+                                                        side: const BorderSide(color: black, width: 2),
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(12)
+                                                        ),
+                                                        foregroundColor: black,
+                                                        backgroundColor: Colors.white,
+                                                      ),
+                                                      child: const Text(
+                                                        "Cancel", 
+                                                        style: TextStyle(fontWeight: FontWeight.bold)
+                                                      ),
+                                                    ),
+                                                  ),
 
-                                            Expanded(
-                                              child: OutlinedButton(
-                                                style: OutlinedButton.styleFrom(
-                                                  padding: const EdgeInsets.symmetric(vertical: 14),
-                                                  side: const BorderSide(color: black, width: 2),
-                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                                  foregroundColor: white,
-                                                  backgroundColor: red,
-                                                ),
-                                                onPressed: () async {
-                                                Navigator.of(context).pop(); // tutup dialog dulu
-                                                
-                                                try {
-                                                  // kirim request ke Django
-                                                  final response = await request.postJson(
-                                                    'http://localhost:8000/match/delete-match-flutter/${match.id}/', 
-                                                    jsonEncode({"id": match.id}),
-                                                  );
+                                                  const SizedBox(width: 12),
 
-                                                  // cek status response, refresh kalau berhasil hapus
-                                                  if (response['status'] == 'success') {
-                                                    setState(() {
-                                                    });
-                                                    
-                                                    if (context.mounted) {
-                                                      ScaffoldMessenger.of(context).showSnackBar(
-                                                        const SnackBar(content: Text("Match berhasil dihapus!")),
-                                                      );
-                                                    }
-                                                  } else {
-                                                    if (context.mounted) {
-                                                      ScaffoldMessenger.of(context).showSnackBar(
-                                                        const SnackBar(content: Text("Gagal menghapus match.")),
-                                                      );
-                                                    }
-                                                  }
-                                                } catch (e) {
-                                                  if (context.mounted) {
-                                                    ScaffoldMessenger.of(context).showSnackBar(
-                                                      SnackBar(content: Text("Error: $e")),
-                                                    );
-                                                  }
-                                                }
-                                              },
-                                              child: const Text("Delete", style: TextStyle(color: white, fontWeight: FontWeight.bold)),
+                                                  // tombol delete
+                                                  Expanded(
+                                                    child: ElevatedButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                        padding: EdgeInsets.symmetric(vertical: buttonPadding),
+                                                        // hapus side border jika ingin style solid clean, atau biarkan jika sesuai desain
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(12),
+                                                          side: const BorderSide(color: black, width: 2) 
+                                                        ),
+                                                        backgroundColor: red,
+                                                        foregroundColor: Colors.white,
+                                                        elevation: 0,
+                                                      ),
+                                                      onPressed: () async {
+                                                        Navigator.of(context).pop(); // tutup dialog dulu
+                                                  
+                                                        try {
+                                                          // kirim request ke Django
+                                                          final response = await request.postJson(
+                                                            'http://localhost:8000/match/delete-match-flutter/${match.id}/', 
+                                                            jsonEncode({"id": match.id}),
+                                                          );
+
+                                                          // cek status response, refresh kalau berhasil hapus
+                                                          if (response['status'] == 'success') {
+                                                            setState(() {
+                                                            });
+                                                            
+                                                            if (context.mounted) {
+                                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                                const SnackBar(content: Text("Match berhasil dihapus!")),
+                                                              );
+                                                            }
+                                                          } else {
+                                                            if (context.mounted) {
+                                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                                const SnackBar(content: Text("Gagal menghapus match.")),
+                                                              );
+                                                            }
+                                                          }
+                                                        } catch (e) {
+                                                          if (context.mounted) {
+                                                            ScaffoldMessenger.of(context).showSnackBar(
+                                                              SnackBar(content: Text("Error: $e")),
+                                                            );
+                                                          }
+                                                        }
+                                                      },
+                                                      child: const Text(
+                                                        "Hapus", 
+                                                        style: TextStyle(fontWeight: FontWeight.bold)
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ],
                                         ),
-                                        const SizedBox(height: 16),
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 );
                               },
                             );
+
+
+                          //   showDialog(
+                          //     context: context,
+                          //     builder: (BuildContext context) {
+                          //       // ambil lebar layar untuk logika responsive
+                          //       final double screenWidth = MediaQuery.of(context).size.width;
+                                
+                          //       // tentukan padding dinamis (kecil di layar sempit, standar di layar lebar)
+                          //       final double dynamicPadding = screenWidth < 400 ? 16.0 : 24.0; 
+                          //       final double buttonPadding = screenWidth < 400 ? 10.0 : 14.0;
+
+                          //       return Dialog(
+                          //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          //         elevation: 0,
+                          //         backgroundColor: Colors.white, // atau transparent?
+                          //         insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+                          //         child: Container(
+                          //           constraints: BoxConstraints(
+                          //             maxHeight: MediaQuery.of(context).size.height * 0.9,
+                          //           ),
+                          //           decoration: BoxDecoration(
+                          //             color: Colors.white,
+                          //             borderRadius: BorderRadius.circular(16),
+                          //             border: Border.all(color: black, width: 2),
+                          //             boxShadow: const [
+                          //               BoxShadow(color: black, offset: Offset(6, 6), blurRadius: 0),
+                          //             ],
+                          //           ),
+                          //           child: Column(
+                          //             mainAxisSize: MainAxisSize.min,
+                          //             children: [
+                          //               // header form
+                          //               Container(
+                          //                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                          //                 decoration: const BoxDecoration(
+                          //                   color: cream,
+                          //                   borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
+                          //                   border: Border(bottom: BorderSide(color: gray, width: 1)),
+                          //                 ),
+                          //                 child: Row(
+                          //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //                   children: [
+                          //                     const Column(
+                          //                       crossAxisAlignment: CrossAxisAlignment.start,
+                          //                       children: [
+                          //                         Text(
+                          //                           "Hapus Match Ini?",
+                          //                           style: TextStyle(
+                          //                               fontSize: 18, fontWeight: FontWeight.w900, color: black),
+                          //                         ),
+                          //                       ],
+                          //                     ),
+                          //                     IconButton(
+                          //                       icon: const Icon(Icons.close, color: black),
+                          //                       onPressed: () => Navigator.pop(context),
+                          //                     ),
+                          //                   ],
+                          //                 ),
+                          //               ),
+
+                          //               const SizedBox(height: 16),
+
+                          //               Row(
+                          //                 children: [
+                          //                   Expanded(
+                          //                     child: OutlinedButton(
+                          //                       onPressed: () => Navigator.pop(context),
+                          //                       style: OutlinedButton.styleFrom(
+                          //                         padding: const EdgeInsets.symmetric(vertical: 14),
+                          //                         side: const BorderSide(color: black, width: 2),
+                          //                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          //                         foregroundColor: black,
+                          //                         backgroundColor: white,
+                          //                       ),
+                          //                       child: const Text("Cancel", style: TextStyle(fontWeight: FontWeight.bold)),
+                          //                     ),
+                          //                   ),
+
+                          //                   const SizedBox(width: 12),
+
+                          //                   Expanded(
+                          //                     child: OutlinedButton(
+                          //                       style: OutlinedButton.styleFrom(
+                          //                         padding: const EdgeInsets.symmetric(vertical: 14),
+                          //                         side: const BorderSide(color: black, width: 2),
+                          //                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          //                         foregroundColor: white,
+                          //                         backgroundColor: red,
+                          //                       ),
+                          //                       onPressed: () async {
+                          //                       Navigator.of(context).pop(); // tutup dialog dulu
+                                                
+                          //                       try {
+                          //                         // kirim request ke Django
+                          //                         final response = await request.postJson(
+                          //                           'http://localhost:8000/match/delete-match-flutter/${match.id}/', 
+                          //                           jsonEncode({"id": match.id}),
+                          //                         );
+
+                          //                         // cek status response, refresh kalau berhasil hapus
+                          //                         if (response['status'] == 'success') {
+                          //                           setState(() {
+                          //                           });
+                                                    
+                          //                           if (context.mounted) {
+                          //                             ScaffoldMessenger.of(context).showSnackBar(
+                          //                               const SnackBar(content: Text("Match berhasil dihapus!")),
+                          //                             );
+                          //                           }
+                          //                         } else {
+                          //                           if (context.mounted) {
+                          //                             ScaffoldMessenger.of(context).showSnackBar(
+                          //                               const SnackBar(content: Text("Gagal menghapus match.")),
+                          //                             );
+                          //                           }
+                          //                         }
+                          //                       } catch (e) {
+                          //                         if (context.mounted) {
+                          //                           ScaffoldMessenger.of(context).showSnackBar(
+                          //                             SnackBar(content: Text("Error: $e")),
+                          //                           );
+                          //                         }
+                          //                       }
+                          //                     },
+                          //                     child: const Text("Delete", style: TextStyle(color: white, fontWeight: FontWeight.bold)),
+                          //                     ),
+                          //                   ),
+                          //                 ],
+                          //               ),
+                          //               const SizedBox(height: 16),
+                          //             ],
+                          //           ),
+                          //         ),
+                          //       );
+                          //     },
+                          //   );
                           },
                         );
                       }
