@@ -21,16 +21,16 @@ class _MerchFormPageState extends State<MerchFormPage> {
   int _price = 0;
   String _description = "";
   String _thumbnail = "";
-  String _category = "Jersey";
+  String _category = "jersey";
   String _productLink = "";
 
   final List<String> _categories = [
-    'Jersey',
-    'Shoes',
-    'Ball',
-    'GK Gloves',
-    'Jacket',
-    'Scarf',
+    'jersey',
+    'shoes',
+    'ball',
+    'gk gloves',
+    'jacket',
+    'scarf',
   ];
 
   @override
@@ -188,14 +188,6 @@ class _MerchFormPageState extends State<MerchFormPage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: DropdownButtonFormField<String>(
-                          initialValue: _category,
-                          decoration: InputDecoration(
-                            labelText: "Kategori",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                          ),
-                          value: _category,
                           items: _categories
                               .map(
                                 (cat) => DropdownMenuItem(
@@ -204,6 +196,13 @@ class _MerchFormPageState extends State<MerchFormPage> {
                                 ),
                               )
                               .toList(),
+                          initialValue: _category,
+                          decoration: InputDecoration(
+                            labelText: "Kategori",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                          ),
                           onChanged: (newValue) =>
                               setState(() => _category = newValue!),
                         ),
