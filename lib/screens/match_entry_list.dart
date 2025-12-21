@@ -63,7 +63,7 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
       body: Column ( 
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // tombol tambah match dan filter pertandingan
+          // tombol tambah match
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -93,6 +93,33 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
                 
                 const SizedBox(width: 8),
 
+                Container(
+                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: red, border: Border.all(color: black)),
+                  child: IconButton(
+                    icon: const Icon(Icons.refresh, color: Colors.white),
+                    tooltip: 'Refresh Data', // teks penjelas saat button di-hold
+                    onPressed: () {
+                      setState(() {});
+                      
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("Memperbarui data..."), 
+                          duration: Duration(milliseconds: 500),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ]
+            )
+          ),
+
+          // tombol filter pertandingan
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              children: [
                 _buildFilterButton('Semua Match', 'all'),
                 const SizedBox(width: 8),
                 _buildFilterButton('Kualifikasi Pala Dunia', 'kualifikasi piala dunia'),
@@ -346,18 +373,18 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
 
                                                           // cek status response, refresh kalau berhasil hapus
                                                           if (response['status'] == 'success') {
-                                                            setState(() {
-                                                            });
-                                                            
                                                             if (context.mounted) {
                                                               ScaffoldMessenger.of(context).showSnackBar(
-                                                                const SnackBar(content: Text("Match berhasil dihapus!")),
+                                                                const SnackBar(content: Text("Match berhasil dihapus!"), backgroundColor: Colors.green),
                                                               );
                                                             }
+
+                                                            setState(() {
+                                                            });
                                                           } else {
                                                             if (context.mounted) {
                                                               ScaffoldMessenger.of(context).showSnackBar(
-                                                                const SnackBar(content: Text("Gagal menghapus match.")),
+                                                                const SnackBar(content: Text("Gagal menghapus match!"),  backgroundColor: red),
                                                               );
                                                             }
                                                           }
@@ -386,143 +413,6 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
                                 );
                               },
                             );
-
-
-                          //   showDialog(
-                          //     context: context,
-                          //     builder: (BuildContext context) {
-                          //       // ambil lebar layar untuk logika responsive
-                          //       final double screenWidth = MediaQuery.of(context).size.width;
-                                
-                          //       // tentukan padding dinamis (kecil di layar sempit, standar di layar lebar)
-                          //       final double dynamicPadding = screenWidth < 400 ? 16.0 : 24.0; 
-                          //       final double buttonPadding = screenWidth < 400 ? 10.0 : 14.0;
-
-                          //       return Dialog(
-                          //         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                          //         elevation: 0,
-                          //         backgroundColor: Colors.white, // atau transparent?
-                          //         insetPadding: const EdgeInsets.symmetric(horizontal: 16),
-                          //         child: Container(
-                          //           constraints: BoxConstraints(
-                          //             maxHeight: MediaQuery.of(context).size.height * 0.9,
-                          //           ),
-                          //           decoration: BoxDecoration(
-                          //             color: Colors.white,
-                          //             borderRadius: BorderRadius.circular(16),
-                          //             border: Border.all(color: black, width: 2),
-                          //             boxShadow: const [
-                          //               BoxShadow(color: black, offset: Offset(6, 6), blurRadius: 0),
-                          //             ],
-                          //           ),
-                          //           child: Column(
-                          //             mainAxisSize: MainAxisSize.min,
-                          //             children: [
-                          //               // header form
-                          //               Container(
-                          //                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                          //                 decoration: const BoxDecoration(
-                          //                   color: cream,
-                          //                   borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
-                          //                   border: Border(bottom: BorderSide(color: gray, width: 1)),
-                          //                 ),
-                          //                 child: Row(
-                          //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //                   children: [
-                          //                     const Column(
-                          //                       crossAxisAlignment: CrossAxisAlignment.start,
-                          //                       children: [
-                          //                         Text(
-                          //                           "Hapus Match Ini?",
-                          //                           style: TextStyle(
-                          //                               fontSize: 18, fontWeight: FontWeight.w900, color: black),
-                          //                         ),
-                          //                       ],
-                          //                     ),
-                          //                     IconButton(
-                          //                       icon: const Icon(Icons.close, color: black),
-                          //                       onPressed: () => Navigator.pop(context),
-                          //                     ),
-                          //                   ],
-                          //                 ),
-                          //               ),
-
-                          //               const SizedBox(height: 16),
-
-                          //               Row(
-                          //                 children: [
-                          //                   Expanded(
-                          //                     child: OutlinedButton(
-                          //                       onPressed: () => Navigator.pop(context),
-                          //                       style: OutlinedButton.styleFrom(
-                          //                         padding: const EdgeInsets.symmetric(vertical: 14),
-                          //                         side: const BorderSide(color: black, width: 2),
-                          //                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          //                         foregroundColor: black,
-                          //                         backgroundColor: white,
-                          //                       ),
-                          //                       child: const Text("Cancel", style: TextStyle(fontWeight: FontWeight.bold)),
-                          //                     ),
-                          //                   ),
-
-                          //                   const SizedBox(width: 12),
-
-                          //                   Expanded(
-                          //                     child: OutlinedButton(
-                          //                       style: OutlinedButton.styleFrom(
-                          //                         padding: const EdgeInsets.symmetric(vertical: 14),
-                          //                         side: const BorderSide(color: black, width: 2),
-                          //                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                          //                         foregroundColor: white,
-                          //                         backgroundColor: red,
-                          //                       ),
-                          //                       onPressed: () async {
-                          //                       Navigator.of(context).pop(); // tutup dialog dulu
-                                                
-                          //                       try {
-                          //                         // kirim request ke Django
-                          //                         final response = await request.postJson(
-                          //                           'http://localhost:8000/match/delete-match-flutter/${match.id}/', 
-                          //                           jsonEncode({"id": match.id}),
-                          //                         );
-
-                          //                         // cek status response, refresh kalau berhasil hapus
-                          //                         if (response['status'] == 'success') {
-                          //                           setState(() {
-                          //                           });
-                                                    
-                          //                           if (context.mounted) {
-                          //                             ScaffoldMessenger.of(context).showSnackBar(
-                          //                               const SnackBar(content: Text("Match berhasil dihapus!")),
-                          //                             );
-                          //                           }
-                          //                         } else {
-                          //                           if (context.mounted) {
-                          //                             ScaffoldMessenger.of(context).showSnackBar(
-                          //                               const SnackBar(content: Text("Gagal menghapus match.")),
-                          //                             );
-                          //                           }
-                          //                         }
-                          //                       } catch (e) {
-                          //                         if (context.mounted) {
-                          //                           ScaffoldMessenger.of(context).showSnackBar(
-                          //                             SnackBar(content: Text("Error: $e")),
-                          //                           );
-                          //                         }
-                          //                       }
-                          //                     },
-                          //                     child: const Text("Delete", style: TextStyle(color: white, fontWeight: FontWeight.bold)),
-                          //                     ),
-                          //                   ),
-                          //                 ],
-                          //               ),
-                          //               const SizedBox(height: 16),
-                          //             ],
-                          //           ),
-                          //         ),
-                          //       );
-                          //     },
-                          //   );
                           },
                         );
                       }
