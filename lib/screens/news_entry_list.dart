@@ -21,9 +21,14 @@ class _NewsEntryListPageState extends State<NewsEntryListPage> {
   static const Color cream = Color(0xFFE7E3DD);
   static const Color black = Color(0xFF111111);
 
+  // FILTER STATE
+  String _filter = "all"; // "all" atau "mine"
+
+  // WAJIB: isi ini dengan userId yang sedang login
+  int? currentUserId;
+
   Future<List<NewsEntry>> fetchNews(CookieRequest request) async {
-    final response =
-    await request.get('http://localhost:8000/news/json/');
+    final response = await request.get('http://localhost:8000/news/json/');
 
     List<NewsEntry> listNews = [];
     for (var d in response) {
@@ -31,6 +36,15 @@ class _NewsEntryListPageState extends State<NewsEntryListPage> {
         listNews.add(NewsEntry.fromJson(d));
       }
     }
+
+    // FILTER
+    if (_filter == "mine") {
+      if (currentUserId == null) {
+        return [];
+      }
+      listNews = listNews.where((n) => n.userId == currentUserId).toList();
+    }
+
     return listNews;
   }
 
@@ -69,16 +83,7 @@ class _NewsEntryListPageState extends State<NewsEntryListPage> {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (snapshot.data!.isEmpty) {
-              return const Center(
-                child: Text(
-                  'There are no news in Garuda Lounge yet.',
-                  style: TextStyle(fontSize: 18, color: black),
-                ),
-              );
-            }
-
-            final list = snapshot.data!;
+            final List<NewsEntry> list = snapshot.data as List<NewsEntry>;
 
             return LayoutBuilder(
               builder: (context, constraints) {
@@ -86,6 +91,7 @@ class _NewsEntryListPageState extends State<NewsEntryListPage> {
 
                 return CustomScrollView(
                   slivers: [
+                    // ===== HEADER (tetap tampil walau list kosong) =====
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(16, 18, 16, 14),
@@ -114,16 +120,29 @@ class _NewsEntryListPageState extends State<NewsEntryListPage> {
                               spacing: 10,
                               runSpacing: 10,
                               children: [
+                                // ALL NEWS
                                 _PillButton(
                                   label: "All News",
-                                  filled: true,
-                                  onTap: () {},
+                                  filled: _filter == "all",
+                                  onTap: () {
+                                    if (_filter != "all") {
+                                      setState(() => _filter = "all");
+                                    }
+                                  },
                                 ),
+
+                                // MY NEWS
                                 _PillButton(
                                   label: "My News",
-                                  filled: false,
-                                  onTap: () {},
+                                  filled: _filter == "mine",
+                                  onTap: () {
+                                    if (_filter != "mine") {
+                                      setState(() => _filter = "mine");
+                                    }
+                                  },
                                 ),
+
+                                // TAMBAH BERITA
                                 _PillButton(
                                   label: "+ Tambah Berita",
                                   filled: true,
@@ -135,7 +154,10 @@ class _NewsEntryListPageState extends State<NewsEntryListPage> {
                                         return NewsFormDialog(
                                           request: request,
                                           onSuccess: () {
-                                            Navigator.of(dialogContext).pop();
+                                            if (Navigator.of(dialogContext)
+                                                .canPop()) {
+                                              Navigator.of(dialogContext).pop();
+                                            }
                                             setState(() {});
                                           },
                                         );
@@ -149,36 +171,52 @@ class _NewsEntryListPageState extends State<NewsEntryListPage> {
                         ),
                       ),
                     ),
-                    SliverPadding(
-                      padding: const EdgeInsets.all(12),
-                      sliver: SliverGrid(
-                        gridDelegate:
-                        SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: columns,
-                          crossAxisSpacing: 14,
-                          mainAxisSpacing: 14,
-                          childAspectRatio: 0.98,
+
+                    // ===== EMPTY STATE =====
+                    if (list.isEmpty)
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: Center(
+                          child: Text(
+                            _filter == "mine"
+                                ? "Belum ada berita dari kamu."
+                                : "Belum ada berita saat ini.",
+                            style: const TextStyle(fontSize: 16, color: black),
+                          ),
                         ),
-                        delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                            final news = list[index];
-                            return NewsEntryCard(
-                              news: news,
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) =>
-                                        NewsDetailPage(news: news),
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                          childCount: list.length,
+                      )
+                    else
+                    // ===== GRID NEWS =====
+                      SliverPadding(
+                        padding: const EdgeInsets.all(12),
+                        sliver: SliverGrid(
+                          gridDelegate:
+                          SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: columns,
+                            crossAxisSpacing: 14,
+                            mainAxisSpacing: 14,
+                            childAspectRatio: 0.98,
+                          ),
+                          delegate: SliverChildBuilderDelegate(
+                                (context, index) {
+                              final news = list[index];
+                              return NewsEntryCard(
+                                news: news,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          NewsDetailPage(news: news),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            childCount: list.length,
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 );
               },
