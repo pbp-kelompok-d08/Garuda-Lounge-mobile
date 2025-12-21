@@ -5,6 +5,12 @@ import 'package:provider/provider.dart';
 import '../models/player_entry.dart';
 import '../widgets/left_drawer.dart';
 import '../widgets/player_card.dart';
+import '../screens/active_player_form.dart';
+
+const Color red = Color(0xFFAA1515);
+const Color white = Color(0xFFFFFFFF);
+const Color cream = Color(0xFFE7E3DD);
+const Color black = Color(0xFF111111);
 
 class ActivePlayersPage extends StatefulWidget {
   const ActivePlayersPage({super.key});
@@ -14,12 +20,13 @@ class ActivePlayersPage extends StatefulWidget {
 }
 
 class _ActivePlayersPageState extends State<ActivePlayersPage> {
-  String _selectedPositionCode = ""; // "", GK, DF, MF, FW
+  String _selectedPositionCode = "";
+  Future<List<PlayerEntry>>? _futurePlayers;
+
+  String get _baseUrl => "http://localhost:8000";
 
   Future<List<PlayerEntry>> fetchPlayers(CookieRequest request) async {
-    final response =
-    await request.get("http://localhost:8000/ProfileAktif/json/");
-
+    final response = await request.get("$_baseUrl/ProfileAktif/json/");
     return List<PlayerEntry>.from(
       response.map((item) => PlayerEntry.fromJson(item)),
     );
@@ -28,7 +35,34 @@ class _ActivePlayersPageState extends State<ActivePlayersPage> {
   String buildPhotoUrl(String rawUrl) {
     if (rawUrl.isEmpty) return "";
     final encoded = Uri.encodeComponent(rawUrl);
-    return "http://localhost:8000/ProfileAktif/proxy-image/?url=$encoded";
+    return "$_baseUrl/ProfileAktif/proxy-image/?url=$encoded";
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final request = context.read<CookieRequest>();
+      setState(() {
+        _futurePlayers = fetchPlayers(request);
+      });
+    });
+  }
+
+  Future<void> _openAddPlayerModal(CookieRequest request) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (_) => ActivePlayerForm(
+        createUrl: "$_baseUrl/ProfileAktif/create-flutter/",
+      ),
+    );
+
+    if (ok == true) {
+      setState(() {
+        _futurePlayers = fetchPlayers(request);
+      });
+    }
   }
 
   @override
@@ -36,12 +70,20 @@ class _ActivePlayersPageState extends State<ActivePlayersPage> {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
+      backgroundColor: cream,
       appBar: AppBar(
-        title: const Text("Daftar Pemain Aktif"),
+        title: const Text(
+          "Daftar Pemain Aktif",
+          style: TextStyle(
+            color: red,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
       ),
       drawer: const LeftDrawer(),
       body: FutureBuilder<List<PlayerEntry>>(
-        future: fetchPlayers(request),
+        future: _futurePlayers ?? fetchPlayers(request),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -49,30 +91,26 @@ class _ActivePlayersPageState extends State<ActivePlayersPage> {
 
           if (snapshot.hasError) {
             return Center(
-              child:
-              Text("Terjadi masalah: ${snapshot.error}", textAlign: TextAlign.center),
+              child: Text(
+                "Terjadi masalah: ${snapshot.error}",
+                textAlign: TextAlign.center,
+              ),
             );
           }
 
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          final allPlayers = snapshot.data ?? [];
+          if (allPlayers.isEmpty) {
             return const Center(
               child: Text("Belum ada pemain aktif terdaftar"),
             );
           }
 
-          final allPlayers = snapshot.data!;
           final filteredPlayers = _selectedPositionCode.isEmpty
               ? allPlayers
               : allPlayers.where((p) {
             final kode = posisiKodeValues.reverse[p.posisiKode] ?? "";
             return kode == _selectedPositionCode;
           }).toList();
-
-          if (filteredPlayers.isEmpty) {
-            return const Center(
-              child: Text("Tidak ada pemain untuk posisi ini"),
-            );
-          }
 
           return Padding(
             padding: const EdgeInsets.all(16),
@@ -82,31 +120,24 @@ class _ActivePlayersPageState extends State<ActivePlayersPage> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxWidth: 220,
-                    ),
+                    constraints: const BoxConstraints(maxWidth: 220),
                     child: FilledButton.icon(
                       style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFFAA1515), // var(--red)
-                        foregroundColor: Colors.white,
+                        backgroundColor: red,
+                        foregroundColor: white,
                         padding: const EdgeInsets.symmetric(
                           vertical: 10,
                           horizontal: 16,
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10), // border-radius: 10px
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                        elevation: 4, // box-shadow
-                        shadowColor: const Color(0x38AA1515), // rgba(170,21,21,.22)
-                        overlayColor: const Color(0xFF8B1010), // hover: #8b1010
+                        elevation: 4,
+                        shadowColor: const Color(0x38AA1515),
+                        overlayColor: const Color(0xFF8B1010),
                       ),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(
-                        Icons.arrow_back,
-                        size: 18,
-                      ),
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.arrow_back, size: 18),
                       label: const Text(
                         "Back to Main Page",
                         style: TextStyle(
@@ -118,14 +149,13 @@ class _ActivePlayersPageState extends State<ActivePlayersPage> {
                   ),
                 ),
                 const SizedBox(height: 20),
-
-                Center(
+                const Center(
                   child: Text(
                     "Pemain Aktif Timnas Indonesia",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
-                      color: Color(0xFFAA1515),
+                      color: red,
                     ),
                   ),
                 ),
@@ -134,43 +164,55 @@ class _ActivePlayersPageState extends State<ActivePlayersPage> {
                   children: [
                     const Text(
                       "Filter posisi",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(width: 12),
-                    DropdownButton<String>(
-                      value:
-                      _selectedPositionCode.isEmpty ? null : _selectedPositionCode,
-                      hint: const Text("Semua posisi"),
-                      items: const [
-                        DropdownMenuItem(
-                          value: "GK",
-                          child: Text("Goalkeeper"),
+                    SizedBox(
+                      width: 220,
+                      child: DropdownButtonFormField<String>(
+                        value: _selectedPositionCode,
+                        isExpanded: true,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: white,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(color: red, width: 1.6),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(color: red, width: 2.0),
+                          ),
                         ),
-                        DropdownMenuItem(
-                          value: "DF",
-                          child: Text("Defender"),
+                        dropdownColor: white,
+                        icon: const Icon(Icons.arrow_drop_down, color: red),
+                        style: const TextStyle(
+                          color: red,
+                          fontWeight: FontWeight.w600,
                         ),
-                        DropdownMenuItem(
-                          value: "MF",
-                          child: Text("Midfielder"),
-                        ),
-                        DropdownMenuItem(
-                          value: "FW",
-                          child: Text("Forward"),
-                        ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedPositionCode = value ?? "";
-                        });
-                      },
+                        items: const [
+                          DropdownMenuItem(value: "", child: Text("Semua posisi")),
+                          DropdownMenuItem(value: "GK", child: Text("Goalkeeper")),
+                          DropdownMenuItem(value: "DF", child: Text("Defender")),
+                          DropdownMenuItem(value: "MF", child: Text("Midfielder")),
+                          DropdownMenuItem(value: "FW", child: Text("Forward")),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedPositionCode = value ?? "";
+                          });
+                        },
+                      ),
                     ),
                     const Spacer(),
                     FilledButton(
                       style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFFAA1515),
+                        backgroundColor: red,
+                        foregroundColor: white,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 8,
@@ -179,30 +221,26 @@ class _ActivePlayersPageState extends State<ActivePlayersPage> {
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content:
-                            Text("Form tambah pemain dari Flutter belum dibuat"),
-                          ),
-                        );
-                      },
+                      onPressed: () => _openAddPlayerModal(request),
                       child: const Text(
                         "+ Tambah Pemain",
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                        style: TextStyle(fontWeight: FontWeight.w700),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
                 Expanded(
-                  child: GridView.builder(
+                  child: filteredPlayers.isEmpty
+                      ? const Center(child: Text("Tidak ada pemain untuk posisi ini"))
+                      : GridView.builder(
                     itemCount: filteredPlayers.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2, // 2 card per baris, mirip responsive
+                    gridDelegate:
+                    const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
                       crossAxisSpacing: 12,
                       mainAxisSpacing: 12,
-                      childAspectRatio: 3 / 4,
+                      childAspectRatio: 3 / 4.3,
                     ),
                     itemBuilder: (context, index) {
                       final player = filteredPlayers[index];
@@ -210,6 +248,12 @@ class _ActivePlayersPageState extends State<ActivePlayersPage> {
                       return PlayerCard(
                         player: player,
                         imageUrl: photoUrl,
+                        baseUrl: _baseUrl,
+                        onChanged: () {
+                          setState(() {
+                            _futurePlayers = fetchPlayers(request);
+                          });
+                        },
                       );
                     },
                   ),

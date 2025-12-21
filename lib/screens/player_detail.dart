@@ -4,6 +4,10 @@ import 'package:provider/provider.dart';
 
 import '../models/player_entry.dart';
 
+const Color red = Color(0xFFAA1515);
+const Color cream = Color(0xFFE7E3DD);
+const Color white = Color(0xFFFFFFFF);
+
 class PlayerDetailPage extends StatefulWidget {
   final String playerId;
 
@@ -14,36 +18,50 @@ class PlayerDetailPage extends StatefulWidget {
 }
 
 class _PlayerDetailPageState extends State<PlayerDetailPage> {
+  String get _baseUrl => "http://localhost:8000";
+
   Future<PlayerEntry> fetchPlayerDetail(CookieRequest request) async {
-    final response = await request.get(
-      "http://localhost:8000/ProfileAktif/json/${widget.playerId}/",
+    final response = await request.get("$_baseUrl/ProfileAktif/json/");
+
+    final list = List<Map<String, dynamic>>.from(response);
+    final found = list.firstWhere(
+          (item) => item["id"].toString() == widget.playerId,
+      orElse: () => <String, dynamic>{},
     );
 
-    return PlayerEntry.fromJson(response[0]);
+    if (found.isEmpty) {
+      throw Exception("Player tidak ditemukan");
+    }
+
+    return PlayerEntry.fromJson(found);
   }
 
   String buildPhotoUrl(String rawUrl) {
-    if (rawUrl.isEmpty) return "";
-    final encoded = Uri.encodeComponent(rawUrl);
-    return "http://localhost:8000/ProfileAktif/proxy-image/?url=$encoded";
+    final cleaned = rawUrl.trim();
+    if (cleaned.isEmpty) return "";
+    if (!(cleaned.startsWith("http://") || cleaned.startsWith("https://"))) return "";
+    final encoded = Uri.encodeComponent(cleaned);
+    return "$_baseUrl/ProfileAktif/proxy-image/?url=$encoded";
   }
+
 
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
 
     return Scaffold(
+      backgroundColor: cream,
       appBar: AppBar(
         title: const Text("Detail Pemain"),
-        backgroundColor: const Color(0xFFAA1515),
-        foregroundColor: Colors.white,
+        backgroundColor: red,
+        foregroundColor: white,
       ),
       body: FutureBuilder<PlayerEntry>(
         future: fetchPlayerDetail(request),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(color: Color(0xFFAA1515)),
+              child: CircularProgressIndicator(color: red),
             );
           }
 
@@ -66,13 +84,12 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // BACK BUTTON
                 Align(
                   alignment: Alignment.centerLeft,
                   child: FilledButton.icon(
                     style: FilledButton.styleFrom(
-                      backgroundColor: const Color(0xFFAA1515),
-                      foregroundColor: Colors.white,
+                      backgroundColor: red,
+                      foregroundColor: white,
                       padding: const EdgeInsets.symmetric(
                         vertical: 10,
                         horizontal: 18,
@@ -84,9 +101,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
                       shadowColor: const Color(0x38AA1515),
                       overlayColor: const Color(0xFF8B1010),
                     ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+                    onPressed: () => Navigator.pop(context),
                     icon: const Icon(Icons.arrow_back, size: 18),
                     label: const Text(
                       "Back",
@@ -94,10 +109,7 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
-                // FOTO
                 ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: photoUrl.isNotEmpty
@@ -106,23 +118,32 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
                     height: 240,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stack) {
+                      return Container(
+                        color: Colors.grey.shade300,
+                        alignment: Alignment.center,
+                        child: Text(
+                          "Gagal load\n${error.toString()}",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 10),
+                        ),
+                      );
+                    },
                   )
                       : Container(
                     height: 240,
+                    width: double.infinity,
                     color: Colors.grey.shade300,
                     child: const Icon(Icons.person, size: 70),
                   ),
                 ),
-
                 const SizedBox(height: 24),
-
-                // CARD DETAIL
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: white,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFFAA1515), width: 1.4),
+                    border: Border.all(color: red, width: 1.4),
                     boxShadow: const [
                       BoxShadow(
                         color: Color(0x33AA1515),
@@ -134,35 +155,18 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Nama
                       Text(
                         player.nama,
                         style: const TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.w800,
-                          color: Color(0xFFAA1515),
+                          color: red,
                         ),
                       ),
-
                       const SizedBox(height: 12),
-
-                      // Posisi + Klub
-                      DetailTile(
-                        title: "Posisi",
-                        value: posisiText,
-                      ),
-                      DetailTile(
-                        title: "Klub",
-                        value: player.klub,
-                      ),
-
-                      // Umur
-                      DetailTile(
-                        title: "Umur",
-                        value: "${player.umur} tahun",
-                      ),
-
-                      // Market Value
+                      DetailTile(title: "Posisi", value: posisiText),
+                      DetailTile(title: "Klub", value: player.klub),
+                      DetailTile(title: "Umur", value: "${player.umur} tahun"),
                       DetailTile(
                         title: "Market Value",
                         value: "€${player.marketValue.toStringAsFixed(2)}",
@@ -179,7 +183,6 @@ class _PlayerDetailPageState extends State<PlayerDetailPage> {
   }
 }
 
-// Widget kecil untuk baris detail
 class DetailTile extends StatelessWidget {
   final String title;
   final String value;

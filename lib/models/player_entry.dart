@@ -1,19 +1,10 @@
-// To parse this JSON data, do
-//
-//     final players = playerEntryFromJson(jsonString);
-// (ini dipakai kalau kamu pakai http biasa, bukan CookieRequest)
-
 import 'dart:convert';
 
 List<PlayerEntry> playerEntryFromJson(String str) =>
-    List<PlayerEntry>.from(
-      json.decode(str).map((x) => PlayerEntry.fromJson(x)),
-    );
+    List<PlayerEntry>.from(json.decode(str).map((x) => PlayerEntry.fromJson(x)));
 
 String playerEntryToJson(List<PlayerEntry> data) =>
-    json.encode(
-      List<dynamic>.from(data.map((x) => x.toJson())),
-    );
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class PlayerEntry {
   final String id;
@@ -37,16 +28,18 @@ class PlayerEntry {
   });
 
   factory PlayerEntry.fromJson(Map<String, dynamic> json) {
+    final rawPosisi = (json["posisi"] ?? "").toString().trim();
+    final rawKode = (json["posisi_kode"] ?? "").toString().trim().toUpperCase();
+
     return PlayerEntry(
       id: json["id"].toString(),
-      nama: json["nama"] ?? "",
-      posisi: posisiValues.map[json["posisi"]] ?? Posisi.MIDFIELDER,
-      posisiKode:
-      posisiKodeValues.map[json["posisi_kode"]] ?? PosisiKode.MF,
-      klub: json["klub"] ?? "",
-      umur: json["umur"] ?? 0,
+      nama: (json["nama"] ?? "").toString(),
+      posisi: posisiValues.map[rawPosisi] ?? Posisi.MIDFIELDER,
+      posisiKode: posisiKodeValues.map[rawKode] ?? PosisiKode.MF,
+      klub: (json["klub"] ?? "").toString(),
+      umur: (json["umur"] as num?)?.toInt() ?? 0,
       marketValue: (json["market_value"] as num?)?.toDouble() ?? 0,
-      foto: json["foto"] ?? "",
+      foto: (json["foto"] ?? "").toString(),
     );
   }
 
@@ -62,12 +55,7 @@ class PlayerEntry {
   };
 }
 
-enum Posisi {
-  DEFENDER,
-  FORWARD,
-  GOALKEEPER,
-  MIDFIELDER,
-}
+enum Posisi { DEFENDER, FORWARD, GOALKEEPER, MIDFIELDER }
 
 final posisiValues = EnumValues({
   "Defender": Posisi.DEFENDER,
@@ -76,12 +64,7 @@ final posisiValues = EnumValues({
   "Midfielder": Posisi.MIDFIELDER,
 });
 
-enum PosisiKode {
-  DF,
-  FW,
-  GK,
-  MF,
-}
+enum PosisiKode { DF, FW, GK, MF }
 
 final posisiKodeValues = EnumValues({
   "DF": PosisiKode.DF,
