@@ -6,10 +6,7 @@ import '../models/player_entry.dart';
 import '../widgets/left_drawer.dart';
 import '../widgets/player_card.dart';
 import 'dart:convert';
-
-const Color red = Color(0xFFAA1515);
-const Color white = Color(0xFFFFFFFF);
-const Color cream = Color(0xFFE7E3DD);
+import '../main.dart';
 
 // sesuai request bg card/modal
 const Color cardBg = Color(0xFFFFF5F5);

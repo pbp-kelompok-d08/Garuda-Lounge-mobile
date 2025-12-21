@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/widgets/homepage_card.dart';
 import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
-import 'package:garuda_lounge_mobile/screens/active_players_page.dart';
 import 'package:garuda_lounge_mobile/main.dart';
 
 class MyHomePage extends StatelessWidget {

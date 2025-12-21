@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:garuda_lounge_mobile/screens/merch_entry_list.dart';
-import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';

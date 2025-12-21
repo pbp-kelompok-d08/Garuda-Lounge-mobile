@@ -8,6 +8,7 @@ import 'package:garuda_lounge_mobile/main.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart'; 
 import 'package:garuda_lounge_mobile/provider/user_provider.dart'; 
+import 'package:garuda_lounge_mobile/screens/active_players_page.dart';
 
 String halamanDipilih = "Home";
 
@@ -131,7 +132,10 @@ class LeftDrawer extends StatelessWidget {
             selectedColor: red,
             onTap: () {
               halamanDipilih = "Pemain Aktif";
-              // TODO: Navigasi Pemain Aktif
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ActivePlayersPage()),
+              );
              
             },
           ),
