@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:garuda_lounge_mobile/screens/menu.dart';
 import 'package:garuda_lounge_mobile/screens/match_entry_list.dart';
 import 'package:garuda_lounge_mobile/screens/news_entry_list.dart';

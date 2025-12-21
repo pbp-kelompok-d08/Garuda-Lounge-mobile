@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/models/news_entry.dart';
-import 'package:garuda_lounge_mobile/services/comment_api_service.dart';
-import 'package:garuda_lounge_mobile/models/comment_entry.dart';
-import 'package:garuda_lounge_mobile/widgets/comment_section.dart'; 
-import 'package:provider/provider.dart';
+import 'package:garuda_lounge_mobile/widgets/comment_section.dart';
 
 const Color red = Color(0xFFAA1515);
 const Color white = Color(0xFFFFFFFF);
@@ -39,7 +36,8 @@ class NewsDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Thumbnail
+
+            // ===== THUMBNAIL =====
             if (news.thumbnail.isNotEmpty)
               Image.network(
                 'http://localhost:8000/news/proxy-image/?url=${Uri.encodeComponent(news.thumbnail)}',
@@ -55,7 +53,7 @@ class NewsDetailPage extends StatelessWidget {
                 ),
               ),
 
-            // ======== CONTENT CARD ========
+            // ===== CONTENT =====
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Container(
@@ -74,6 +72,7 @@ class NewsDetailPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
                     if (news.isFeatured)
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -93,10 +92,9 @@ class NewsDetailPage extends StatelessWidget {
                         ),
                       ),
 
-                    // TITLE
                     Text(
                       news.title,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                         color: black,
@@ -104,7 +102,6 @@ class NewsDetailPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
 
-                    // CATEGORY + DATE
                     Row(
                       children: [
                         Container(
@@ -116,7 +113,7 @@ class NewsDetailPage extends StatelessWidget {
                           ),
                           child: Text(
                             news.category.toUpperCase(),
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                               color: red,
@@ -133,9 +130,9 @@ class NewsDetailPage extends StatelessWidget {
                         ),
                       ],
                     ),
+
                     const SizedBox(height: 8),
 
-                    // VIEWS
                     Row(
                       children: [
                         Icon(Icons.visibility,
@@ -153,23 +150,21 @@ class NewsDetailPage extends StatelessWidget {
 
                     const Divider(height: 32),
 
-                    // FULL CONTENT
                     Text(
                       news.content,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                         height: 1.6,
                         color: black,
                       ),
                       textAlign: TextAlign.justify,
                     ),
-                    const SizedBox(height: 24),
                   ],
                 ),
               ),
             ),
 
-            // ======== COMMENT SECTION (DITAMBAHKAN DI SINI) ========
+            // ===== COMMENTS =====
             CommentSection(newsId: news.id),
             const SizedBox(height: 40),
           ],

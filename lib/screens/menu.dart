@@ -28,9 +28,9 @@ class MyHomePage extends StatelessWidget {
               height: 30, 
               fit: BoxFit.contain,
             ),
-            
+
             const SizedBox(width: 12), 
-            
+
             const Text(
               'GarudaLounge',
               textAlign: TextAlign.left,
@@ -42,10 +42,9 @@ class MyHomePage extends StatelessWidget {
             ),
           ],
         ),
-
-        backgroundColor: white, 
-        elevation: 0, 
       ),
+
+          
       
       drawer: const LeftDrawer(),
 
