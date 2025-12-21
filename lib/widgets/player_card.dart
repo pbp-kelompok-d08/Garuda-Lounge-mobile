@@ -141,6 +141,8 @@ class PlayerCard extends StatelessWidget {
                         onChanged?.call(); // refresh list
                       }
                     },
+
+                    // TODO ✅ button ini cuma bisa diakses sama admin
                     child: const Text(
                       "Edit",
                       style: TextStyle(fontWeight: FontWeight.w700),
@@ -180,6 +182,8 @@ class PlayerCard extends StatelessWidget {
                         );
                       }
                     },
+
+                    // TODO ✅ button ini cuma bisa diakses sama admin
                     child: const Text(
                       "Delete",
                       style: TextStyle(fontWeight: FontWeight.w700),

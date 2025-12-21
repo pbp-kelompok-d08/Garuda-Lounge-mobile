@@ -221,6 +221,8 @@ class _ActivePlayersPageState extends State<ActivePlayersPage> {
                         ),
                       ),
                       onPressed: () => _openAddPlayerDialog(request),
+
+                      // TODO ✅ button ini cuma bisa diakses sama admin
                       child: const Text(
                         "+ Tambah Pemain",
                         style: TextStyle(fontWeight: FontWeight.w700),
