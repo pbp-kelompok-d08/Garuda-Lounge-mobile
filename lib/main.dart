@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-// import 'package:garuda_lounge_mobile/screens/menu.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:garuda_lounge_mobile/screens/login.dart';
+import 'package:garuda_lounge_mobile/provider/user_provider.dart';
 
-// Colors from the original code
-const Color red = Color(0xFFAA1515);     // Primary: #AA1515
-const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF
-const Color cream = Color(0xFFE7E3DD);   // Background/Surface: #E7E3DD
+const Color red = Color(0xFFAA1515);   
+const Color white = Color(0xFFFFFFFF);   
+const Color cream = Color(0xFFE7E3DD);   
 const Color black = Color(0xFF111111);
 const Color gray = Color(0xFF374151);
 
@@ -22,11 +21,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Provider(
-      create: (_) {
-        CookieRequest request = CookieRequest();
-        return request;
-      },
+    return MultiProvider(
+      providers: [
+        // Provider 1: CookieRequest (PBP Django Auth)
+        Provider(
+          create: (_) {
+            CookieRequest request = CookieRequest();
+            return request;
+          },
+        ),
+        // Provider 2: UserProvider (Buatan kita sendiri)
+        ChangeNotifierProvider(
+          create: (_) => UserProvider(),
+        ),
+      ],
       child: MaterialApp(
         title: 'GarudaLounge',
 

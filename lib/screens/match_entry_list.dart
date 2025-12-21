@@ -1,4 +1,3 @@
-// import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/models/match_entry.dart';
 import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
@@ -9,6 +8,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:garuda_lounge_mobile/main.dart';
 import 'package:garuda_lounge_mobile/screens/match_form.dart';
 import 'dart:convert';
+import 'package:garuda_lounge_mobile/provider/user_provider.dart';
 
 
 class MatchEntryListPage extends StatefulWidget {
@@ -19,6 +19,21 @@ class MatchEntryListPage extends StatefulWidget {
 }
 
 class _MatchEntryListPageState extends State<MatchEntryListPage> {
+
+  // kita mau fetch status user sekali saja saat halaman dibuka
+  // pakai addPostFrameCallback karena kita butuh context provider
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+       final request = context.read<CookieRequest>();
+       final userProvider = context.read<UserProvider>();
+       
+       // ini tidak jalan kalau sudahpernah fetch
+       userProvider.fetchUserStatus(request);
+    });
+  }
+
   Future<List<MatchEntry>> fetchMatch(CookieRequest request) async {
     // Replace the URL with your app's URL and don't forget to add a trailing slash (/)!
     // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
@@ -44,6 +59,8 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    final userProvider = context.watch<UserProvider>(); 
+    final isStaff = userProvider.isStaff; // ambil data dari provider
     Future<List<MatchEntry>> futureMatches = fetchMatch(request);
     return Scaffold(
       appBar: AppBar(
@@ -69,47 +86,50 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
-                ElevatedButton(
-                  onPressed: () async {
-                    final result = await showDialog(
-                      context: context,
-                      builder: (context) => const MatchFormPage(),
-                    );
-
-                    // jika result == true, artinya berhasil save, maka refresh halaman
-                    if (result == true) {
-                      setState(() {});
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: red,
-                    foregroundColor: white,
-                    side: BorderSide(color: black),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                  child: const Text("+ Tambah Match", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                ),
-                
-                const SizedBox(width: 8),
-
-                Container(
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: red, border: Border.all(color: black)),
-                  child: IconButton(
-                    icon: const Icon(Icons.refresh, color: Colors.white),
-                    tooltip: 'Refresh Data', // teks penjelas saat button di-hold
-                    onPressed: () {
-                      setState(() {});
-                      
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text("Memperbarui data..."), 
-                          duration: Duration(milliseconds: 500),
-                        ),
+                // button tambah match cuma muncul kalau role user-nya admin
+                if (isStaff) ...[
+                  ElevatedButton(
+                    onPressed: () async {
+                      final result = await showDialog(
+                        context: context,
+                        builder: (context) => const MatchFormPage(),
                       );
+
+                      // jika result == true, artinya berhasil save, maka refresh halaman
+                      if (result == true) {
+                        setState(() {});
+                      }
                     },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: red,
+                      foregroundColor: white,
+                      side: BorderSide(color: black),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text("+ Tambah Match", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                   ),
-                ),
+                  
+                  const SizedBox(width: 8),
+
+                  Container(
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: red, border: Border.all(color: black)),
+                    child: IconButton(
+                      icon: const Icon(Icons.refresh, color: Colors.white),
+                      tooltip: 'Refresh Data', // teks penjelas saat button di-hold
+                      onPressed: () {
+                        setState(() {});
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Memperbarui data..."), 
+                            duration: Duration(milliseconds: 500),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ]
               ]
             )
           ),
@@ -120,15 +140,48 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
-                _buildFilterButton('Semua Match', 'all'),
-                const SizedBox(width: 8),
-                _buildFilterButton('Kualifikasi Pala Dunia', 'kualifikasi piala dunia'),
-                const SizedBox(width: 8),
-                _buildFilterButton('Piala Asia', 'piala asia'),
-                const SizedBox(width: 8),
-                _buildFilterButton('Piala ASEAN', 'piala asean'),
-                const SizedBox(width: 8),
-                _buildFilterButton('Persahabatan', 'pertandingan persahabatan'),
+                if (isStaff == false) ...[
+                  Container(
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12), color: red, border: Border.all(color: black)),
+                    child: IconButton(
+                      icon: const Icon(Icons.refresh, color: Colors.white),
+                      tooltip: 'Refresh Data', // teks penjelas saat button di-hold
+                      onPressed: () {
+                        setState(() {});
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Memperbarui data..."), 
+                            duration: Duration(milliseconds: 500),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+
+                  _buildFilterButton('Semua Match', 'all'),
+                  const SizedBox(width: 8),
+                  _buildFilterButton('Kualifikasi Pala Dunia', 'kualifikasi piala dunia'),
+                  const SizedBox(width: 8),
+                  _buildFilterButton('Piala Asia', 'piala asia'),
+                  const SizedBox(width: 8),
+                  _buildFilterButton('Piala ASEAN', 'piala asean'),
+                  const SizedBox(width: 8),
+                  _buildFilterButton('Persahabatan', 'pertandingan persahabatan'),
+                ]
+
+                else ...[
+                  _buildFilterButton('Semua Match', 'all'),
+                  const SizedBox(width: 8),
+                  _buildFilterButton('Kualifikasi Pala Dunia', 'kualifikasi piala dunia'),
+                  const SizedBox(width: 8),
+                  _buildFilterButton('Piala Asia', 'piala asia'),
+                  const SizedBox(width: 8),
+                  _buildFilterButton('Piala ASEAN', 'piala asean'),
+                  const SizedBox(width: 8),
+                  _buildFilterButton('Persahabatan', 'pertandingan persahabatan'),
+                ]
               ],
             ),
           ),
@@ -178,7 +231,7 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
                         
                         return MatchEntryCard(
                           match: match,
-                          
+                          isStaff: isStaff,
                           onTap: () {
                             // Navigate to match detail page
                             Navigator.push(
