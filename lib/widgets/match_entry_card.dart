@@ -178,7 +178,7 @@ Widget buildTeamRow(
             ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: Image.network(
-                'http://localhost:8000/proxy-image/?url=${Uri.encodeComponent(flagUrl)}',
+                'https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/proxy-image/?url=${Uri.encodeComponent(flagUrl)}',
                 width: 40, 
                 height: 40,
                 fit: BoxFit.cover,

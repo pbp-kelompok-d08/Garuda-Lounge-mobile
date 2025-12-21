@@ -817,9 +817,9 @@ class _MatchFormPage extends State<MatchFormPage> {
     try {
       String url;
       if (widget.match == null) {
-        url = "http://localhost:8000/match/create-match-flutter/";
+        url = "https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/match/create-match-flutter/";
       } else {
-        url = "http://localhost:8000/match/edit-match-flutter/${widget.match!.id}/";
+        url = "https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/match/edit-match-flutter/${widget.match!.id}/";
       }
       final response = await request.postJson(
         url, 

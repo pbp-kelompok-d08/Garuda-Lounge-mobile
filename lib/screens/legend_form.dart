@@ -58,8 +58,8 @@ class _LegendPlayerFormState extends State<LegendPlayerForm> {
     };
 
     final String url = widget.legend == null 
-        ? "http://127.0.0.1:8000/ProfileLegend/create-flutter/"
-        : "http://127.0.0.1:8000/ProfileLegend/edit-flutter/${widget.legend!.id}/";
+        ? "https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/ProfileLegend/create-flutter/"
+        : "https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/ProfileLegend/edit-flutter/${widget.legend!.id}/";
 
     final response = await request.postJson(url, jsonEncode(payload));
 

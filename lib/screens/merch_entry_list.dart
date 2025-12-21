@@ -20,7 +20,7 @@ class _MerchEntryListPageState extends State<MerchEntryListPage> {
     // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
     // If you using chrome,  use URL http://localhost:8000
     
-    final response = await request.get('http://localhost:8000/merchandise/json/');
+    final response = await request.get('https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/merchandise/json/');
     
     // Decode response to json format
     var data = response;
@@ -274,7 +274,7 @@ class _MerchEntryListPageState extends State<MerchEntryListPage> {
                                                 try {
                                                   // kirim request ke Django
                                                   final response = await request.postJson(
-                                                    'http://localhost:8000/merchandise/delete-flutter/${merch.id}/', 
+                                                    'https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/merchandise/delete-flutter/${merch.id}/', 
                                                     jsonEncode({"id": merch.id}),
                                                   );
 

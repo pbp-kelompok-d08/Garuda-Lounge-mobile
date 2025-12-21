@@ -3,7 +3,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 class CommentApiService {
   // FIX: untuk Flutter Web di laptop
-  static const String baseUrl = "http://127.0.0.1:8000";
+  static const String baseUrl = "https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id";
 
   static Future<List<dynamic>> fetchComments(CookieRequest request, String newsId) async {
     final res = await request.get("$baseUrl/news/api/$newsId/comments/");

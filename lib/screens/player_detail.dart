@@ -18,7 +18,7 @@ class PlayerDetailPage extends StatefulWidget {
 }
 
 class _PlayerDetailPageState extends State<PlayerDetailPage> {
-  String get _baseUrl => "http://localhost:8000";
+  String get _baseUrl => "https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id";
 
   Future<PlayerEntry> fetchPlayerDetail(CookieRequest request) async {
     final response = await request.get("$_baseUrl/ProfileAktif/json/");

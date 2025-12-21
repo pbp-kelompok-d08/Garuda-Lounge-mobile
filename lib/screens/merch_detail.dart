@@ -35,7 +35,7 @@ class MerchDetailPage extends StatelessWidget {
             // Thumbnail image
             if (merch.thumbnail.isNotEmpty)
               Image.network(
-                'http://localhost:8000/proxy-image/?url=${Uri.encodeComponent(merch.thumbnail)}',
+                'https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/proxy-image/?url=${Uri.encodeComponent(merch.thumbnail)}',
                 width: double.infinity,
                 height: 250,
                 fit: BoxFit.cover,

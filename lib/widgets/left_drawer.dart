@@ -169,7 +169,7 @@ class LeftDrawer extends StatelessWidget {
             onTap: () async {
               userProvider.logout();
               final response = await request.logout(
-                  "http://localhost:8000/auth/logout/");
+                  "https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/auth/logout/");
               String message = response["message"];
               if (context.mounted) {
                 if (response['status']) {

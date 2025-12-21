@@ -27,7 +27,7 @@ class UserProvider extends ChangeNotifier {
     if (_isDataFetched) return;
 
     try {
-      final response = await request.get('http://localhost:8000/auth/status/');
+      final response = await request.get('https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/auth/status/');
       
       _isStaff = response['is_staff'] ?? false;
       _username = response['username'] ?? "Guest";
