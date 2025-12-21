@@ -1,124 +1,125 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:garuda_lounge_mobile/screens/menu.dart';
 import 'package:garuda_lounge_mobile/screens/match_entry_list.dart';
-import 'package:garuda_lounge_mobile/screens/login.dart';
-import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:provider/provider.dart';
-
-const Color red = Color(0xFFAA1515);     // Primary: #AA1515
-const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF
-const Color cream = Color(0xFFE7E3DD);  // Background/Surface: #E7E3DD
-const Color black = Color(0xFF111111);
-const Color gray = Color(0xFF374151);
+import 'package:garuda_lounge_mobile/screens/news_entry_list.dart';
+import 'package:garuda_lounge_mobile/screens/merch_entry_list.dart';
+import 'package:garuda_lounge_mobile/widgets/left_drawer.dart'; 
+import 'package:garuda_lounge_mobile/main.dart';
+import 'package:garuda_lounge_mobile/screens/active_players_page.dart';
+import 'package:garuda_lounge_mobile/screens/legend_page.dart';
 
 class ItemCard extends StatelessWidget {
-  // Menampilkan kartu dengan ikon dan nama.
+  final ItemHomepage item;
 
-  final ItemHomepage item; 
+  const ItemCard(this.item, {super.key});
 
-  const ItemCard(this.item, {super.key}); 
+  // Fungsi helper untuk navigasi agar kode lebih rapi
+  void _handleNavigation(BuildContext context) {
+    if (item.name == "Baca Berita Menarik") {
+      halamanDipilih = "News"; 
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const NewsEntryListPage()),
+      );
+    } else if (item.name == "Koleksi Merchandise") {
+      halamanDipilih = "Merchandise";
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const MerchEntryListPage()),
+      );
+    } else if (item.name == "Riwayat Pertandingan") {
+      halamanDipilih = "Match";
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const MatchEntryListPage()),
+      );
+    } else if (item.name == "Daftar Pemain Aktif") {
+      halamanDipilih = "Pemain Aktif";
+       Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ActivePlayersPage()),
+      );
+    } else if (item.name == "Galeri Pemain Legend") {
+      halamanDipilih = "Pemain Legend";
+      Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LegendPlayersPage()),
+              );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final request = context.watch<CookieRequest>();
-    return Material(
-      // Menentukan warna latar belakang dari tema aplikasi.
-      color: Theme.of(context).colorScheme.primary,
-      // Membuat sudut kartu melengkung.
-      borderRadius: BorderRadius.circular(12),
-
-      child: InkWell(
-        // Aksi ketika kartu ditekan.
-        onTap: () async {
-          // Menampilkan pesan SnackBar saat kartu ditekan.
-          ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            SnackBar(content: Text("Kamu telah menekan tombol ${item.name}!"))
-          );
-
-          // Navigate ke route yang sesuai (tergantung jenis tombol)
-          if (item.name == "Baca Berita Menarik") {
-            // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman News
-          } else if (item.name == "Koleksi Merchandise") {
-            // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Merch
-          } else if (item.name == "Jadwal Pertandingan") {
-            // Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Match
-            halamanDipilih = "Match";
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const MatchEntryListPage()
-              ),
-            );
-          } else if (item.name == "Tambah Pertandingan") {
-            // ini nyoba doang 
-            // Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Match
-            halamanDipilih = "Match";
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const MatchEntryListPage()
-              ),
-            );
-          } else if (item.name == "Daftar Pemain Aktif") {
-            // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Player Aktif
-          } else if (item.name == "Galeri Pemain Legend") {
-            // TODO: Gunakan Navigator.push untuk melakukan navigasi ke MaterialPageRoute untuk halaman Player Legend
-          } else if (item.name == "Logout") {
-            // Replace the URL with your app's URL and don't forget to add a trailing slash (/)!
-            // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
-            // If you using chrome,  use URL http://localhost:8000
-            
-            final response = await request.logout(
-                "http://localhost:8000/auth/logout/");
-            String message = response["message"];
-            if (context.mounted) {
-              if (response['status']) {
-                  String uname = response["username"];
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("$message See you again, $uname."),
-                  ));
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const LoginPage()),
-                  );
-              } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(message),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0), 
+      child: Container(
+        decoration: BoxDecoration(
+          color: white,
+          borderRadius: BorderRadius.circular(16.0),
+          border: Border.all(
+            color: red, // Border warna merah
+            width: 2.0,
+          ),
+          boxShadow: [
+             BoxShadow(
+              color: Colors.grey,
+              spreadRadius: 1,
+              blurRadius: 3,
+              offset: const Offset(0, 2),
+            ),
+          ]
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(16.0),
+            onTap: () {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(SnackBar(
+                    content: Text("Kamu telah menekan tombol ${item.name}!")));
+              _handleNavigation(context);
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(
+                      item.name,
+                      style: const TextStyle(
+                        color: red,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.0,
+                      ),
                     ),
-                  );
-                }
-            }
-          }
-        },
-        // Container untuk menyimpan Icon dan Text
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          child: Center(
-            child: Column(
-              // Menyusun ikon dan teks di tengah kartu.
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  item.icon,
-                  color: white,
-                  size: 30.0,
-                ),
-                const Padding(padding: EdgeInsets.all(3)),
-                Text(
-                  item.name,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: white),
-                ),
-              ],
+                  ),
+                  
+                  ElevatedButton(
+                    onPressed: () {
+                      _handleNavigation(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: red,
+                      foregroundColor: white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    ),
+                    child: const Text(
+                      "Lihat",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
   }
-
 }
