@@ -2,12 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/models/match_entry.dart';
 import 'package:garuda_lounge_mobile/main.dart';
 import 'package:garuda_lounge_mobile/widgets/match_entry_card.dart';
-// import 'package:garuda_lounge_mobile/main.dart';
-// import 'package:garuda_lounge_mobile/widgets/match_entry_card.dart';
-// import 'package:garuda_lounge_mobile/screens/match_entry_list.dart';
-// import 'package:flutter/material.dart';
-// import 'package:garuda_lounge_mobile/models/match_entry.dart';
-
 // import 'package:url_launcher/url_launcher.dart';
 
 class MatchDetailPage extends StatefulWidget {
@@ -48,10 +42,16 @@ class _MatchDetailPageState extends State<MatchDetailPage> {
 
     return Scaffold(
       backgroundColor: cream,
-      appBar: AppBar(
-        title: const Text("Match Details", style: TextStyle(color: white, fontWeight: FontWeight.bold)),
-        backgroundColor: red,
-        iconTheme: const IconThemeData(color: white),
+      appBar:AppBar(
+        title: const Text(
+          'GarudaLounge',
+          style: TextStyle(
+          color: red,
+          fontWeight: FontWeight.bold,
+          ),
+        ),
+        // Warna latar belakang AppBar diambil dari skema warna tema aplikasi.
+        backgroundColor: Theme.of(context).colorScheme.secondary,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
@@ -175,28 +175,29 @@ class _MatchDetailPageState extends State<MatchDetailPage> {
                     ),
                   ),
 
-                  // HIGHLIGHT BUTTON
+                  // tombol highlight
                   if (match.highlight.isNotEmpty && match.highlight != "-")
                   Container(
-                    width: double.infinity,
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(border: Border(top: BorderSide(color: red))),
-                    child: ElevatedButton(
-                      // onPressed: () => _launchURL(match.highlight),
-                      onPressed: () => (match.highlight),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: red, 
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                    child: Center (
+                      child: ElevatedButton(
+                        // onPressed: () => _launchURL(match.highlight),
+                        onPressed: () => (match.highlight),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: red, 
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
+                        child: const Text("Lihat Highlight", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17)),
                       ),
-                      child: const Text("Lihat Highlight", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                     ),
                   ),
 
-                  // TABS SECTION (Hanya jika bukan Friendly Match)
+                  // tab lineup dan statistik pertandingan
                   if (!isFriendly) ...[
                     Container(
                       decoration: BoxDecoration(
@@ -221,7 +222,7 @@ class _MatchDetailPageState extends State<MatchDetailPage> {
                     ),
                   ],
 
-                  // FOOTER: STADION
+                  // stadion
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
@@ -266,9 +267,9 @@ class _MatchDetailPageState extends State<MatchDetailPage> {
     );
   }
 
-  // LOGIKA LINEUP (Menggabungkan String menjadi pasangan)
+  // lineup
   Widget _buildLineupContent(MatchEntry match) {
-    // Parsing String starter/subs menjadi List
+    // parsing string starter/pengganti mjadi List
     List<String> homeStarters = getListFromString(match.starterTuanRumah);
     List<String> awayStarters = getListFromString(match.starterTamu);
     List<String> homeSubs = getListFromString(match.penggantiTuanRumah);
@@ -293,9 +294,9 @@ class _MatchDetailPageState extends State<MatchDetailPage> {
     );
   }
 
-  // Helper untuk menampilkan list pemain kiri-kanan
+  // helper untuk menampilkan list pemain kiri-kanan
   Widget _buildPairedList(List<String> home, List<String> away) {
-    // Cari panjang list terpanjang agar tidak error index out of bounds
+    // cari panjang list terpanjang agar tidak error index out of bounds
     int count = home.length > away.length ? home.length : away.length;
     if (count == 0) return const Text("-");
 
@@ -322,7 +323,7 @@ class _MatchDetailPageState extends State<MatchDetailPage> {
     );
   }
 
-  // LOGIKA STATISTIK
+  // statistik
   Widget _buildStatsContent(MatchEntry match, bool isAseanCup) {
     if (isAseanCup) return const Center(child: Text("Statistik tidak tersedia untuk Piala Asean"));
 
@@ -348,7 +349,7 @@ class _MatchDetailPageState extends State<MatchDetailPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(width: 40, child: Text(homeVal, style: const TextStyle(fontWeight: FontWeight.bold))),
-          Text(label, style: TextStyle(color: red, fontWeight: FontWeight.w600, fontSize: 13)),
+          Text(label, style: TextStyle(color: red, fontWeight: FontWeight.w600, fontSize: 15)),
           SizedBox(width: 40, child: Text(awayVal, textAlign: TextAlign.end, style: const TextStyle(fontWeight: FontWeight.bold))),
         ],
       ),

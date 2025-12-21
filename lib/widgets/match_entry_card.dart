@@ -107,22 +107,6 @@ class MatchEntryCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // const Text(
-                //   "Details",
-                //   style: TextStyle(
-                //     fontWeight: FontWeight.bold,
-                //     color: Colors.blue,
-                //   ),
-                // ),
-                // // tombol edit, delete, detail 
-                // Row(
-                //   children: [
-                //     Icon(Icons.edit, size: 20, color: Colors.orange[300]),
-                //     const SizedBox(width: 8),
-                //     Icon(Icons.delete, size: 20, color: Colors.red[300]),
-                //   ],
-                // )
-  
                 TextButton(
                   onPressed: onTap, 
                   child: const Text(

@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:garuda_lounge_mobile/screens/match_form.dart';
 import 'package:garuda_lounge_mobile/screens/menu.dart';
 import 'package:garuda_lounge_mobile/screens/match_entry_list.dart';
 import 'package:garuda_lounge_mobile/screens/news_entry_list.dart';
 import 'package:garuda_lounge_mobile/screens/merch_entry_list.dart';
-import 'package:garuda_lounge_mobile/screens/merch_form.dart';
+import 'package:garuda_lounge_mobile/main.dart';
 
-const Color red = Color(0xFFAA1515);     // Primary: #AA1515
-const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF
-const Color cream = Color(0xFFE7E3DD);  // Background/Surface: #E7E3DD
-const Color black = Color(0xFF111111);
-const Color gray = Color(0xFF374151);
 String halamanDipilih = "Home";
 
 class LeftDrawer extends StatelessWidget {
@@ -138,30 +132,6 @@ class LeftDrawer extends StatelessWidget {
 
           ListTile(
             leading: const Icon(
-              Icons.shop,
-              fontWeight: FontWeight.w600,
-            ),
-            title: const Text(
-              'Add Merch',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-            iconColor: black,
-            textColor: black,
-            selected: halamanDipilih == "Add Merch",
-            selectedColor: red,
-            // Bagian redirection ke MyHomePage
-            onTap: () {
-              halamanDipilih = "Add Merch";
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MerchFormPage(),
-                  ));
-            },
-          ),
-
-          ListTile(
-            leading: const Icon(
               Icons.sports_soccer,
               fontWeight: FontWeight.w600,
             ),
@@ -181,33 +151,6 @@ class LeftDrawer extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => MatchEntryListPage(),
                 )
-              );
-            },
-          ),
-
-          ListTile(
-            leading: const Icon(
-              Icons.add,
-              fontWeight: FontWeight.w600,
-            ),
-            title: const Text(
-              'Match',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
-            iconColor: black,
-            textColor: black,
-            selected: halamanDipilih == "Tambah Match",
-            selectedColor: red,
-            // Bagian redirection ke halaman match
-            onTap: () {
-              halamanDipilih = "Tambah Match";
-              // ini buat nyoba aja btw
-              // mungkin kalau mau tambah match, bisa dibikin button gitu di halaman daftar match
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MatchFormPage(),
-                ),
               );
             },
           ),

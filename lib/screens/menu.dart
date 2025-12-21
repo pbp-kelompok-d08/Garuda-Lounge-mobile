@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/widgets/homepage_card.dart';
 import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
-
-const Color red = Color(0xFFAA1515);     // Primary: #AA1515
-const Color white = Color(0xFFFFFFFF);   // Secondary: #FFFFFF
-const Color cream = Color(0xFFE7E3DD);  // Background/Surface: #E7E3DD
-const Color black = Color(0xFF111111);
+import 'package:garuda_lounge_mobile/main.dart';
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});

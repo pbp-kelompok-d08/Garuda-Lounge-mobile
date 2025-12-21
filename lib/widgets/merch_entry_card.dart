@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/models/merch_entry.dart';
+import 'package:garuda_lounge_mobile/main.dart';
 
 class MerchEntryCard extends StatelessWidget {
   final MerchEntry merch;
@@ -25,7 +26,7 @@ class MerchEntryCard extends StatelessWidget {
         child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
-            side: const BorderSide(color: Color(0xFFAA1515)),
+            side: const BorderSide(color: red),
           ),
           elevation: 3,
           clipBehavior: Clip.antiAlias,
@@ -62,7 +63,7 @@ class MerchEntryCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w800,
-                        color: Color(0xFFAA1515),
+                        color: red,
                       ),
                     ),
 
@@ -102,7 +103,44 @@ class MerchEntryCard extends StatelessWidget {
                     ),
 
                     const SizedBox(height: 12),
-                    const Divider(),
+                  ],
+                ),
+              ),
+              const Divider(height: 1, thickness: 2, color: red,),
+
+              // footer action buttons
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        TextButton(
+                          onPressed: onEdit, 
+                          child: const Text(
+                            "Edit",
+                            style: TextStyle(
+                              fontWeight: FontWeight.normal, 
+                              color: black, 
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+
+                        TextButton(
+                          onPressed: onDelete, 
+                          child: const Text(
+                            "Delete",
+                            style: TextStyle(
+                              fontWeight: FontWeight.normal, 
+                              color: Color.fromARGB(255, 224, 13, 13),
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ]
+                    ),
                   ],
                 ),
               ),
@@ -112,4 +150,13 @@ class MerchEntryCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String titled(String text) {
+  String result = "";
+  for (String s in text.split(" ")) {
+    result = "$result${s[0].toUpperCase()}${s.substring(1)} ";
+  }
+
+  return result;
 }
