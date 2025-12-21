@@ -1,13 +1,10 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 class NewsFormDialog extends StatefulWidget {
   final CookieRequest request;
-
-  ///refresh list setelah berhasil post
   final VoidCallback? onSuccess;
 
   const NewsFormDialog({
@@ -27,7 +24,7 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
 
   String _title = "";
   String _content = "";
-  String? _category; // null -> "Pilih kategori"
+  String? _category;
   String _thumbnail = "";
   bool _isFeatured = false;
 
@@ -58,14 +55,11 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final baseUrl =
-    kIsWeb ? "http://localhost:8000" : "http://10.0.2.2:8000";
-
     setState(() => _isSubmitting = true);
 
     try {
       final response = await widget.request.postJson(
-        "$baseUrl/news/create-flutter/",
+        "http://localhost:8000/news/create-flutter/",
         jsonEncode({
           "title": _title,
           "content": _content,
@@ -82,7 +76,7 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
           status == true || status == "success" || status == "ok";
 
       if (isSuccess) {
-        Navigator.pop(context); // tutup dialog
+        Navigator.pop(context);
         widget.onSuccess?.call();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("News successfully saved!")),
@@ -116,7 +110,6 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Header: title + close
               Row(
                 children: [
                   const Expanded(
@@ -130,9 +123,9 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
                     ),
                   ),
                   IconButton(
-                    onPressed: _isSubmitting ? null : () => Navigator.pop(context),
+                    onPressed:
+                    _isSubmitting ? null : () => Navigator.pop(context),
                     icon: const Icon(Icons.close),
-                    splashRadius: 18,
                   ),
                 ],
               ),
@@ -142,26 +135,27 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    // Judul
                     TextFormField(
                       decoration: _dec("Judul"),
-                      onChanged: (v) => setState(() => _title = v),
+                      onChanged: (v) => _title = v,
                       validator: (v) =>
-                      (v == null || v.trim().isEmpty) ? "Judul wajib diisi" : null,
+                      (v == null || v.trim().isEmpty)
+                          ? "Judul wajib diisi"
+                          : null,
                     ),
                     const SizedBox(height: 12),
 
-                    // Konten
                     TextFormField(
                       maxLines: 5,
                       decoration: _dec("Konten"),
-                      onChanged: (v) => setState(() => _content = v),
+                      onChanged: (v) => _content = v,
                       validator: (v) =>
-                      (v == null || v.trim().isEmpty) ? "Konten wajib diisi" : null,
+                      (v == null || v.trim().isEmpty)
+                          ? "Konten wajib diisi"
+                          : null,
                     ),
                     const SizedBox(height: 12),
 
-                    // Kategori
                     DropdownButtonFormField<String>(
                       value: _category,
                       decoration: _dec("Kategori", hint: "Pilih kategori"),
@@ -169,47 +163,45 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
                           .map(
                             (cat) => DropdownMenuItem(
                           value: cat,
-                          child: Text(cat[0].toUpperCase() + cat.substring(1)),
+                          child: Text(
+                            cat[0].toUpperCase() + cat.substring(1),
+                          ),
                         ),
                       )
                           .toList(),
-                      onChanged: (v) => setState(() => _category = v),
-                      validator: (v) => (v == null) ? "Pilih kategori dulu" : null,
+                      onChanged: (v) => _category = v,
+                      validator: (v) =>
+                      v == null ? "Pilih kategori dulu" : null,
                     ),
                     const SizedBox(height: 12),
 
-                    // Thumbnail
                     TextFormField(
                       decoration: _dec(
                         "Thumbnail URL",
                         hint: "https://example.com/image.jpg",
                       ),
-                      onChanged: (v) => setState(() => _thumbnail = v),
+                      onChanged: (v) => _thumbnail = v,
                     ),
                     const SizedBox(height: 8),
 
-                    // Featured
                     CheckboxListTile(
                       value: _isFeatured,
-                      onChanged: (v) => setState(() => _isFeatured = v ?? false),
+                      onChanged: (v) => _isFeatured = v ?? false,
                       title: const Text("Featured News"),
                       controlAffinity: ListTileControlAffinity.leading,
                       contentPadding: EdgeInsets.zero,
                       activeColor: red,
                     ),
 
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 12),
 
-                    // Buttons
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         OutlinedButton(
-                          onPressed: _isSubmitting ? null : () => Navigator.pop(context),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: red,
-                            side: const BorderSide(color: red),
-                          ),
+                          onPressed: _isSubmitting
+                              ? null
+                              : () => Navigator.pop(context),
                           child: const Text("Cancel"),
                         ),
                         const SizedBox(width: 10),
@@ -217,13 +209,15 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
                           onPressed: _isSubmitting ? null : _submit,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: red,
-                            foregroundColor: Colors.white,
                           ),
                           child: _isSubmitting
                               ? const SizedBox(
                             width: 18,
                             height: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2),
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
                           )
                               : const Text("Publish"),
                         ),

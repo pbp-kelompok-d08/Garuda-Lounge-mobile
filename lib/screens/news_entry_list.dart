@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:garuda_lounge_mobile/models/news_entry.dart';
 import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
@@ -9,8 +8,6 @@ import 'package:garuda_lounge_mobile/screens/newslist_form.dart';
 
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
-
-import 'package:garuda_lounge_mobile/screens/newslist_form.dart';
 
 class NewsEntryListPage extends StatefulWidget {
   const NewsEntryListPage({super.key});
@@ -25,14 +22,14 @@ class _NewsEntryListPageState extends State<NewsEntryListPage> {
   static const Color black = Color(0xFF111111);
 
   Future<List<NewsEntry>> fetchNews(CookieRequest request) async {
-    final baseUrl =
-    kIsWeb ? "http://localhost:8000" : "http://10.0.2.2:8000";
-
-    final response = await request.get('$baseUrl/news/json/');
+    final response =
+    await request.get('http://localhost:8000/news/json/');
 
     List<NewsEntry> listNews = [];
     for (var d in response) {
-      if (d != null) listNews.add(NewsEntry.fromJson(d));
+      if (d != null) {
+        listNews.add(NewsEntry.fromJson(d));
+      }
     }
     return listNews;
   }
@@ -50,17 +47,13 @@ class _NewsEntryListPageState extends State<NewsEntryListPage> {
     return Scaffold(
       backgroundColor: cream,
       drawer: const LeftDrawer(),
-
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
             SliverAppBar(
               pinned: true,
-              floating: false,
-              snap: false,
               backgroundColor: cream,
               elevation: innerBoxIsScrolled ? 1 : 0,
-              toolbarHeight: 64,
               iconTheme: const IconThemeData(color: black),
               title: const Text(
                 'Garuda Lounge News',
@@ -69,15 +62,14 @@ class _NewsEntryListPageState extends State<NewsEntryListPage> {
             ),
           ];
         },
-
         body: FutureBuilder(
           future: fetchNews(request),
           builder: (context, AsyncSnapshot snapshot) {
-            if (snapshot.data == null) {
+            if (!snapshot.hasData) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            if (snapshot.data!.isEmpty) {
               return const Center(
                 child: Text(
                   'There are no news in Garuda Lounge yet.',
@@ -138,17 +130,12 @@ class _NewsEntryListPageState extends State<NewsEntryListPage> {
                                   onTap: () async {
                                     await showDialog(
                                       context: context,
-                                      barrierDismissible: true, // klik area gelap = dialog tertutup
-                                      builder: (BuildContext dialogContext) {
+                                      barrierDismissible: true,
+                                      builder: (dialogContext) {
                                         return NewsFormDialog(
                                           request: request,
                                           onSuccess: () {
-                                            // Tutup dialog kalau belum ketutup
-                                            if (Navigator.of(dialogContext).canPop()) {
-                                              Navigator.of(dialogContext).pop();
-                                            }
-
-                                            // Refresh list berita
+                                            Navigator.of(dialogContext).pop();
                                             setState(() {});
                                           },
                                         );
@@ -162,11 +149,11 @@ class _NewsEntryListPageState extends State<NewsEntryListPage> {
                         ),
                       ),
                     ),
-
                     SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(12, 12, 12, 18),
+                      padding: const EdgeInsets.all(12),
                       sliver: SliverGrid(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate:
+                        SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: columns,
                           crossAxisSpacing: 14,
                           mainAxisSpacing: 14,
@@ -181,7 +168,7 @@ class _NewsEntryListPageState extends State<NewsEntryListPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
+                                    builder: (_) =>
                                         NewsDetailPage(news: news),
                                   ),
                                 );
