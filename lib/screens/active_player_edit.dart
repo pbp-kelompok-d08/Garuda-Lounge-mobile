@@ -5,6 +5,11 @@ import 'package:provider/provider.dart';
 
 import '../models/player_entry.dart';
 
+const Color dsRed = Color(0xFFAA1515);
+const Color dsWhite = Color(0xFFFFFFFF);
+const Color modalBg = Color(0xFFFFF5F5);
+const Color dsBlack = Color(0xFF111111);
+
 class EditPlayerForm extends StatefulWidget {
   final PlayerEntry player;
   final String baseUrl;
@@ -30,6 +35,42 @@ class _EditPlayerFormState extends State<EditPlayerForm> {
 
   String _posisiKode = "MF";
   bool _isSubmitting = false;
+  String? _error;
+
+  // ====== STYLE (samain kayak modal tambah pemain) ======
+  TextStyle get _labelStyle => const TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w800,
+    color: dsBlack,
+  );
+
+  InputDecoration _dec(String hint) {
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: Colors.grey.shade300, width: 1.4),
+    );
+
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: TextStyle(
+        color: Colors.grey.shade500,
+        fontWeight: FontWeight.w600,
+      ),
+      filled: true,
+      fillColor: dsWhite,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      enabledBorder: border,
+      focusedBorder: border.copyWith(
+        borderSide: const BorderSide(color: dsRed, width: 1.8),
+      ),
+      errorBorder: border.copyWith(
+        borderSide: const BorderSide(color: Colors.red, width: 1.4),
+      ),
+      focusedErrorBorder: border.copyWith(
+        borderSide: const BorderSide(color: Colors.red, width: 1.8),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -103,7 +144,10 @@ class _EditPlayerFormState extends State<EditPlayerForm> {
     final ok = _formKey.currentState?.validate() ?? false;
     if (!ok) return;
 
-    setState(() => _isSubmitting = true);
+    setState(() {
+      _isSubmitting = true;
+      _error = null;
+    });
 
     final request = context.read<CookieRequest>();
 
@@ -124,13 +168,11 @@ class _EditPlayerFormState extends State<EditPlayerForm> {
 
       if (!mounted) return;
 
-      // pbp_django_auth kadang balikin Map atau dynamic
       if (res is Map && res["status"] == "success") {
         Navigator.pop(context, true);
         return;
       }
 
-      // kalau error dari backend: {"status":"error","errors":{...}} atau {"message":...}
       String msg = "Gagal update pemain";
       if (res is Map) {
         if (res["message"] != null) msg = res["message"].toString();
@@ -140,14 +182,10 @@ class _EditPlayerFormState extends State<EditPlayerForm> {
         }
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(msg)),
-      );
+      setState(() => _error = msg);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error: $e")),
-      );
+      setState(() => _error = "Error: $e");
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -155,131 +193,188 @@ class _EditPlayerFormState extends State<EditPlayerForm> {
 
   @override
   Widget build(BuildContext context) {
-    const red = Color(0xFFAA1515);
-    const white = Colors.white;
+    final viewInsets = MediaQuery.of(context).viewInsets.bottom;
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+      backgroundColor: modalBg,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: dsRed, width: 2), // border merah DS
+      ),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 520),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(bottom: viewInsets), // aman keyboard
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // HEADER
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(18, 16, 10, 10),
+                  child: Row(
                     children: [
                       const Expanded(
                         child: Text(
-                          "Edit Pemain",
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: red),
+                          "Edit Pemain Aktif",
+                          style: TextStyle(
+                            color: dsRed,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 22,
+                          ),
                         ),
                       ),
                       IconButton(
                         onPressed: _isSubmitting ? null : () => Navigator.pop(context, false),
-                        icon: const Icon(Icons.close),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-
-                  TextFormField(
-                    controller: _namaController,
-                    decoration: const InputDecoration(
-                      labelText: "Nama",
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (v) => _validateRequiredText(v, "Nama"),
-                  ),
-                  const SizedBox(height: 12),
-
-                  DropdownButtonFormField<String>(
-                    value: _posisiKode,
-                    decoration: const InputDecoration(
-                      labelText: "Posisi",
-                      border: OutlineInputBorder(),
-                    ),
-                    items: const [
-                      DropdownMenuItem(value: "GK", child: Text("Goalkeeper")),
-                      DropdownMenuItem(value: "DF", child: Text("Defender")),
-                      DropdownMenuItem(value: "MF", child: Text("Midfielder")),
-                      DropdownMenuItem(value: "FW", child: Text("Forward")),
-                    ],
-                    onChanged: _isSubmitting ? null : (v) => setState(() => _posisiKode = v ?? "MF"),
-                  ),
-                  const SizedBox(height: 12),
-
-                  TextFormField(
-                    controller: _klubController,
-                    decoration: const InputDecoration(
-                      labelText: "Klub",
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (v) => _validateRequiredText(v, "Klub"),
-                  ),
-                  const SizedBox(height: 12),
-
-                  TextFormField(
-                    controller: _umurController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: "Umur",
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: _validateUmur,
-                  ),
-                  const SizedBox(height: 12),
-
-                  TextFormField(
-                    controller: _marketValueController,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: const InputDecoration(
-                      labelText: "Market Value (€)",
-                      hintText: "Contoh: 2.61",
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: _validateMarketValue,
-                  ),
-                  const SizedBox(height: 12),
-
-                  TextFormField(
-                    controller: _fotoController,
-                    keyboardType: TextInputType.url,
-                    decoration: const InputDecoration(
-                      labelText: "URL Foto (wajib)",
-                      hintText: "https://....jpg",
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: _validateUrl,
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
-                      style: FilledButton.styleFrom(
-                        backgroundColor: red,
-                        foregroundColor: white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        icon: Icon(Icons.close, color: Colors.grey.shade600),
                       ),
-                      onPressed: _isSubmitting ? null : _submit,
-                      child: _isSubmitting
-                          ? const SizedBox(
-                        height: 18,
-                        width: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                      )
-                          : const Text("Simpan Perubahan", style: TextStyle(fontWeight: FontWeight.w800)),
+                    ],
+                  ),
+                ),
+
+                // BODY (SCROLL)
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(18, 6, 18, 14),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Nama", style: _labelStyle),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            controller: _namaController,
+                            decoration: _dec("Masukkan nama pemain"),
+                            validator: (v) => _validateRequiredText(v, "Nama"),
+                          ),
+                          const SizedBox(height: 18),
+
+                          Text("Posisi", style: _labelStyle),
+                          const SizedBox(height: 10),
+                          DropdownButtonFormField<String>(
+                            value: _posisiKode,
+                            decoration: _dec("Pilih posisi"),
+                            icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                            dropdownColor: dsWhite,
+                            items: const [
+                              DropdownMenuItem(value: "GK", child: Text("Goalkeeper")),
+                              DropdownMenuItem(value: "DF", child: Text("Defender")),
+                              DropdownMenuItem(value: "MF", child: Text("Midfielder")),
+                              DropdownMenuItem(value: "FW", child: Text("Forward")),
+                            ],
+                            onChanged: _isSubmitting
+                                ? null
+                                : (v) => setState(() => _posisiKode = v ?? "MF"),
+                          ),
+                          const SizedBox(height: 18),
+
+                          Text("Klub", style: _labelStyle),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            controller: _klubController,
+                            decoration: _dec("Nama klub pemain"),
+                            validator: (v) => _validateRequiredText(v, "Klub"),
+                          ),
+                          const SizedBox(height: 18),
+
+                          Text("Umur", style: _labelStyle),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            controller: _umurController,
+                            keyboardType: TextInputType.number,
+                            decoration: _dec("Masukkan umur"),
+                            validator: _validateUmur,
+                          ),
+                          const SizedBox(height: 18),
+
+                          Text("Market Value (Rp)", style: _labelStyle),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            controller: _marketValueController,
+                            keyboardType:
+                            const TextInputType.numberWithOptions(decimal: true),
+                            decoration: _dec("Contoh: 150000"),
+                            validator: _validateMarketValue,
+                          ),
+                          const SizedBox(height: 18),
+
+                          Text("URL Foto", style: _labelStyle),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            controller: _fotoController,
+                            keyboardType: TextInputType.url,
+                            decoration: _dec("Masukkan URL foto pemain"),
+                            validator: _validateUrl,
+                          ),
+
+                          if (_error != null) ...[
+                            const SizedBox(height: 14),
+                            Text(
+                              _error!,
+                              style: const TextStyle(
+                                color: Colors.red,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
                   ),
-                ],
-              ),
+                ),
+
+                // FOOTER BUTTONS
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(18, 0, 18, 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: dsRed, width: 1.8),
+                          foregroundColor: dsRed,
+                          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: _isSubmitting ? null : () => Navigator.pop(context, false),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(fontWeight: FontWeight.w900),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      FilledButton(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: dsRed,
+                          foregroundColor: dsWhite,
+                          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: _isSubmitting ? null : _submit,
+                        child: _isSubmitting
+                            ? const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: dsWhite,
+                          ),
+                        )
+                            : const Text(
+                          "Simpan",
+                          style: TextStyle(fontWeight: FontWeight.w900),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ),

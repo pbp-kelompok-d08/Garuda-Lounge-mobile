@@ -5,10 +5,14 @@ import 'package:provider/provider.dart';
 import '../models/player_entry.dart';
 import '../widgets/left_drawer.dart';
 import '../widgets/player_card.dart';
+import 'dart:convert';
 
 const Color red = Color(0xFFAA1515);
 const Color white = Color(0xFFFFFFFF);
 const Color cream = Color(0xFFE7E3DD);
+
+// sesuai request bg card/modal
+const Color cardBg = Color(0xFFFFF5F5);
 
 class ActivePlayersPage extends StatefulWidget {
   const ActivePlayersPage({super.key});
@@ -277,6 +281,41 @@ class _AddPlayerDialogState extends State<_AddPlayerDialog> {
   String _posisi = "GK";
   bool _loading = false;
 
+  // ==== STYLE HELPERS (pict 3) ====
+  TextStyle get _labelStyle => const TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w800,
+    color: Color(0xFF111111),
+  );
+
+  InputDecoration _dec(String hint) {
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: Colors.grey.shade300, width: 1.4),
+    );
+
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: TextStyle(
+        color: Colors.grey.shade500,
+        fontWeight: FontWeight.w600,
+      ),
+      filled: true,
+      fillColor: white,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      enabledBorder: border,
+      focusedBorder: border.copyWith(
+        borderSide: const BorderSide(color: red, width: 1.8),
+      ),
+      errorBorder: border.copyWith(
+        borderSide: const BorderSide(color: Colors.red, width: 1.4),
+      ),
+      focusedErrorBorder: border.copyWith(
+        borderSide: const BorderSide(color: Colors.red, width: 1.8),
+      ),
+    );
+  }
+
   bool _isValidUrl(String s) {
     final uri = Uri.tryParse(s);
     if (uri == null) return false;
@@ -322,9 +361,9 @@ class _AddPlayerDialogState extends State<_AddPlayerDialog> {
     };
 
     try {
-      final res = await request.post(
+      final res = await request.postJson(
         "${widget.baseUrl}/ProfileAktif/create-flutter/",
-        payload,
+        jsonEncode(payload),
       );
 
       if (!context.mounted) return;
@@ -348,99 +387,196 @@ class _AddPlayerDialogState extends State<_AddPlayerDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text("Tambah Pemain"),
-      content: SizedBox(
-        width: 420,
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
+    final viewInsets = MediaQuery.of(context).viewInsets.bottom;
+
+    // Pakai Dialog custom (bukan AlertDialog) biar styling bisa "full control"
+    return Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+      backgroundColor: cardBg,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: red, width: 2),
+      ),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 520),
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(bottom: viewInsets),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                TextFormField(
-                  controller: _nama,
-                  decoration: const InputDecoration(labelText: "Nama"),
-                  validator: (v) => (v == null || v.trim().isEmpty) ? "Wajib diisi" : null,
+                // HEADER
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(18, 16, 10, 10),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          "Tambah Pemain Aktif",
+                          style: TextStyle(
+                            color: red,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 22,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.close, color: Colors.grey.shade600),
+                        onPressed: _loading ? null : () => Navigator.pop(context, false),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 10),
-                DropdownButtonFormField<String>(
-                  value: _posisi,
-                  decoration: const InputDecoration(labelText: "Posisi"),
-                  items: const [
-                    DropdownMenuItem(value: "GK", child: Text("Goalkeeper")),
-                    DropdownMenuItem(value: "DF", child: Text("Defender")),
-                    DropdownMenuItem(value: "MF", child: Text("Midfielder")),
-                    DropdownMenuItem(value: "FW", child: Text("Forward")),
-                  ],
-                  onChanged: (v) => setState(() => _posisi = v ?? "GK"),
+
+                // BODY (SCROLLABLE)
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(18, 6, 18, 14),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Nama", style: _labelStyle),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            controller: _nama,
+                            decoration: _dec("Masukkan nama pemain"),
+                            validator: (v) =>
+                            (v == null || v.trim().isEmpty) ? "Wajib diisi" : null,
+                          ),
+                          const SizedBox(height: 18),
+
+                          Text("Posisi", style: _labelStyle),
+                          const SizedBox(height: 10),
+                          DropdownButtonFormField<String>(
+                            value: _posisi,
+                            decoration: _dec("Pilih posisi"),
+                            icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                            dropdownColor: white,
+                            items: const [
+                              DropdownMenuItem(value: "GK", child: Text("Goalkeeper")),
+                              DropdownMenuItem(value: "DF", child: Text("Defender")),
+                              DropdownMenuItem(value: "MF", child: Text("Midfielder")),
+                              DropdownMenuItem(value: "FW", child: Text("Forward")),
+                            ],
+                            onChanged: _loading ? null : (v) => setState(() => _posisi = v ?? "GK"),
+                          ),
+                          const SizedBox(height: 18),
+
+                          Text("Klub", style: _labelStyle),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            controller: _klub,
+                            decoration: _dec("Nama klub pemain"),
+                            validator: (v) =>
+                            (v == null || v.trim().isEmpty) ? "Wajib diisi" : null,
+                          ),
+                          const SizedBox(height: 18),
+
+                          Text("Umur", style: _labelStyle),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            controller: _umur,
+                            keyboardType: TextInputType.number,
+                            decoration: _dec("Masukkan umur"),
+                            validator: (v) {
+                              final n = int.tryParse((v ?? "").trim());
+                              if (n == null) return "Harus angka";
+                              if (n <= 0 || n > 60) return "Umur tidak valid";
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 18),
+
+                          Text("Market Value (Rp)", style: _labelStyle),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            controller: _marketValue,
+                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            decoration: _dec("Contoh: 150000"),
+                            validator: (v) {
+                              final s = _sanitizeMarketValue(v ?? "");
+                              final n = double.tryParse(s);
+                              if (n == null) return "Harus angka (boleh titik)";
+                              if (n < 0) return "Tidak boleh minus";
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 18),
+
+                          Text("URL Foto", style: _labelStyle),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            controller: _foto,
+                            decoration: _dec("Masukkan URL foto pemain"),
+                            validator: (v) {
+                              final s = (v ?? "").trim();
+                              if (s.isEmpty) return "URL wajib";
+                              if (!_isValidUrl(s)) return "Harus URL http/https valid";
+                              return null;
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  controller: _klub,
-                  decoration: const InputDecoration(labelText: "Klub"),
-                  validator: (v) => (v == null || v.trim().isEmpty) ? "Wajib diisi" : null,
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  controller: _umur,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(labelText: "Umur"),
-                  validator: (v) {
-                    final n = int.tryParse((v ?? "").trim());
-                    if (n == null) return "Harus angka";
-                    if (n <= 0 || n > 60) return "Umur tidak valid";
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  controller: _marketValue,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(labelText: "Market Value (€)"),
-                  validator: (v) {
-                    final s = _sanitizeMarketValue(v ?? "");
-                    final n = double.tryParse(s);
-                    if (n == null) return "Harus angka (boleh titik)";
-                    if (n < 0) return "Tidak boleh minus";
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  controller: _foto,
-                  decoration: const InputDecoration(labelText: "URL Foto"),
-                  validator: (v) {
-                    final s = (v ?? "").trim();
-                    if (s.isEmpty) return "URL wajib";
-                    if (!_isValidUrl(s)) return "Harus URL http/https valid";
-                    return null;
-                  },
+
+                // FOOTER BUTTONS
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(18, 0, 18, 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: red, width: 1.8),
+                          foregroundColor: red,
+                          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        onPressed: _loading ? null : () => Navigator.pop(context, false),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(fontWeight: FontWeight.w900),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      FilledButton(
+                        onPressed: _loading ? null : _submit,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: red,
+                          foregroundColor: white,
+                          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: _loading
+                            ? const SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: white,
+                          ),
+                        )
+                            : const Text(
+                          "Simpan",
+                          style: TextStyle(fontWeight: FontWeight.w900),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: _loading ? null : () => Navigator.pop(context, false),
-          child: const Text("Cancel"),
-        ),
-        FilledButton(
-          onPressed: _loading ? null : _submit,
-          style: FilledButton.styleFrom(
-            backgroundColor: const Color(0xFFAA1515),
-            foregroundColor: Colors.white,
-          ),
-          child: _loading
-              ? const SizedBox(
-            height: 18,
-            width: 18,
-            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-          )
-              : const Text("Simpan"),
-        ),
-      ],
     );
   }
 }
