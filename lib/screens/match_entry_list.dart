@@ -261,7 +261,6 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
                           },
 
                           onDeletePressed: () {
-                            // Panggil ini di dalam onDeletePressed
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
