@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/screens/menu.dart';
 import 'package:garuda_lounge_mobile/screens/match_entry_list.dart';
 import 'package:garuda_lounge_mobile/screens/news_entry_list.dart';
+import 'package:garuda_lounge_mobile/screens/merch_entry_list.dart';
 import 'package:garuda_lounge_mobile/widgets/left_drawer.dart'; 
 import 'package:garuda_lounge_mobile/main.dart';
 
@@ -20,7 +21,10 @@ class ItemCard extends StatelessWidget {
       );
     } else if (item.name == "Koleksi Merchandise") {
       halamanDipilih = "Merchandise";
-      // TODO: Navigasi Merchandise
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const MerchEntryListPage()),
+      );
     } else if (item.name == "Riwayat Pertandingan") {
       halamanDipilih = "Match";
       Navigator.push(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/screens/menu.dart';
 import 'package:garuda_lounge_mobile/screens/match_entry_list.dart';
 import 'package:garuda_lounge_mobile/screens/news_entry_list.dart';
+import 'package:garuda_lounge_mobile/screens/merch_entry_list.dart';
 import 'package:garuda_lounge_mobile/screens/login.dart'; 
 import 'package:garuda_lounge_mobile/main.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -94,8 +95,14 @@ class LeftDrawer extends StatelessWidget {
             selectedColor: red,
             onTap: () {
               halamanDipilih = "Merchandise";
-              // TODO: Navigasi Merchandise
-              
+              /*
+              TODO: Buatlah routing buat menampilkan daftar Merchandise
+              */
+              Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MerchEntryListPage(),
+                    ));
             },
           ),
 
