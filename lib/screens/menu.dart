@@ -16,6 +16,7 @@ class MyHomePage extends StatelessWidget {
     ItemHomepage("Jadwal Pertandingan", Icons.sports_soccer),
     ItemHomepage("Daftar Pemain Aktif", Icons.person),
     ItemHomepage("Galeri Pemain Legend", Icons.person_outline_outlined),
+    ItemHomepage("Logout", Icons.logout),
   ];
 
   @override
