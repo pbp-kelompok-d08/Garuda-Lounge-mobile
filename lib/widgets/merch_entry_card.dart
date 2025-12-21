@@ -109,6 +109,7 @@ class MerchEntryCard extends StatelessWidget {
               const Divider(height: 1, thickness: 2, color: red,),
 
               // footer action buttons
+              //TODO: bagian edit dan delete hanya bisa diakses admin
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(

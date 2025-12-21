@@ -64,6 +64,7 @@ class _MerchEntryListPageState extends State<MerchEntryListPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
+                //TODO: hanya bisa diakses oleh admin
                 ElevatedButton(
                   onPressed: () async {
                     final result = await showDialog(
