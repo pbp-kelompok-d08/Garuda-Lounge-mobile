@@ -42,16 +42,45 @@ Menampilkan informasi tentang pemain-pemain legendaris yang pernah membela Timna
 Setiap pemain akan punya halaman profil sendiri berisi biografi singkat dan pencapaian kariernya.
 
 ## Deskripsi Role Pengguna
-Aplikasi kami memiliki dua jenis pengguna utama:
-1. Admin
-Dapat menambah, mengubah, dan menghapus data pada seluruh modul (profil, berita, merchandise, dan pemain legend).
-Bertanggung jawab menjaga agar konten di aplikasi selalu up to date dan relevan.
-2. User Biasa (Pengunjung)
-Dapat membaca berita, melihat profil pemain dan merchandise, serta memberikan komentar pada artikel.
-Tidak memiliki akses untuk mengubah data di aplikasi.
+Aplikasi kami memiliki satu jenis pengguna yaitu user biasa (Pengunjung) yang
+dapat membaca berita, melihat profil pemain dan merchandise, memberikan komentar pada artikel, serta memiliki akses untuk mengubah data di aplikasi.
 
-## Alur pengintegrasian data di aplikasi dengan aplikasi web (PWS) yang sudah dibuat saat Proyek Tengah Semester  
-Pertama-tama,
+## Alur Pengintegrasian Data di Aplikasi Mobile Dengan Aplikasi Web (PWS)  
+### 1. Mengaktifkan CORS  
+* Menambahkan `django-cors-headers` ke `requirements.txt` yang ada di proyek Django.
+* Menginstall library `corsheaders`:
+ ```css
+ pip install django-cors-headers
+```
+* Menambahkan `corsheaders` ke `INSTALLED_APPS` di `settings.py` di proyek Django.
+* Menambahkan `corsheaders.middleware.CorsMiddleware` ke `MIDDLEWARE` di `settings.py` di proyek Django.
+* Menambahkan variabel-variabel ini di `settings.py` di proyek Django untuk mengaktifkan akses lintas-domain (CORS), tepi tetap memastikan keamanan cookie lewat penggunaan HTTPS dan memungkinkan cookie session dan CSRF ditransmisikan saat dibutuhkan dari domain luar (dengan `Samesite='None'`).
+```css
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
+```
+* Menambahkan alamat `10.0.2.2` di `ALLOWD_HOSTS` di `settings.py` untuk keperluan integrasi ke Django dari emulator Android
+
+### 2. Membuat Model Dart Untuk Masing-masing Model di Django
+* Buka endpoint `JSON` dari masing-masing model di Django untuk mendapat data dari model tersebut.
+* Format data `JSON` tersebut ke bahasa Dart.
+* method `fromJson` untuk mengubah JSON dari Django menjadi objek Dart dan method `toJson` untuk mengubah objek Dart menjadi JSON saat dikirim balik ke Django
+* Buat file untuk masing-masing model Dart yang ingin dibuat.
+* Letakkan data `JSON` yang sudah diformat ke file untuk masing-masing model Dart.
+    
+### 3. Menerapkan Fetch Data dari Django Untuk Ditampilkan ke Flutter
+* Menambahkan package http untuk proyek Flutter dengan menjalankan command ini di terminal proyek Flutter:
+```css
+flutter pub add http
+```
+* Memperbolehkan akses internet pada aplikasi Flutter dengan menambahkan `<uses-permission android:name="android.permission.INTERNET" />`  di `android/app/src/main/AndroidManifest.xml`
+* Menambahkan endpoint proxy untuk mengatasi masalah CORS untuk gambar (ini dilakuakn di `setting.py` proyek Django).
+* Buat fungsi asinkronus untuk fetch data dari masing-maisng model Django.
+* Menampilkan data di UI dengan cara menghubngkan fungsi fetch data dengan tampilan layar menggunakan `FutureBuilder` 
 
 ## Link APK dan Desain FIGMA
 Link APK :  (menyusul)  
