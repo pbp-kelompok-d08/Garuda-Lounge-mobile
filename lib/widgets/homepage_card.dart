@@ -5,6 +5,7 @@ import 'package:garuda_lounge_mobile/screens/news_entry_list.dart';
 import 'package:garuda_lounge_mobile/screens/merch_entry_list.dart';
 import 'package:garuda_lounge_mobile/widgets/left_drawer.dart'; 
 import 'package:garuda_lounge_mobile/main.dart';
+import 'package:garuda_lounge_mobile/screens/active_players_page.dart';
 
 class ItemCard extends StatelessWidget {
   final ItemHomepage item;
@@ -33,7 +34,10 @@ class ItemCard extends StatelessWidget {
       );
     } else if (item.name == "Daftar Pemain Aktif") {
       halamanDipilih = "Pemain Aktif";
-      // TODO: Navigasi Pemain Aktif
+       Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ActivePlayersPage()),
+      );
     } else if (item.name == "Galeri Pemain Legend") {
       halamanDipilih = "Pemain Legend";
       // TODO: Navigasi Pemain Legend
