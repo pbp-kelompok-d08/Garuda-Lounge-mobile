@@ -9,6 +9,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart'; 
 import 'package:garuda_lounge_mobile/provider/user_provider.dart'; 
 import 'package:garuda_lounge_mobile/screens/active_players_page.dart';
+import 'package:garuda_lounge_mobile/screens/legend_page.dart';
 
 String halamanDipilih = "Home";
 
@@ -150,6 +151,10 @@ class LeftDrawer extends StatelessWidget {
             onTap: () {
               halamanDipilih = "Pemain Legend";
               // TODO: Navigasi Pemain Legend
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LegendPlayersPage()),
+              );
              
             },
           ),
