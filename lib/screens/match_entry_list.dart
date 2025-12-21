@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:garuda_lounge_mobile/main.dart';
 import 'package:garuda_lounge_mobile/screens/match_form.dart';
+import 'dart:convert';
 
 
 class MatchEntryListPage extends StatefulWidget {
@@ -163,62 +164,155 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
                             );
                           },
 
-                          onEditPressed: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute( // navigasi ke form edit
-                            //     builder: (context) => MatchEditPage(match: match),
-                            //   ),
-                            // );
-                            print("edit match");
+                          onEditPressed: () async {
+                            final result = await showDialog(
+                              context: context,
+                              builder: (context) => MatchFormPage(
+                                match: match, // buka modal form, terus kirim data match yang diklik sebagai parameter
+                              ),
+                            );
+
+                            // refresh halaman ika berhasil tamabah atau edit match
+                            if (result == true) {
+                              setState(() {
+                                
+                              });
+                            }
                           },
 
                           onDeletePressed: () {
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return AlertDialog(
-                                  backgroundColor: white,
-                                  title:  const Text(
-                                    "Hapus Pertandingan",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: red,
+                                // ambil lebar layar untuk logika responsive
+                                final double screenWidth = MediaQuery.of(context).size.width;
+                                
+                                // tentukan padding dinamis (kecil di layar sempit, standar di layar lebar)
+                                final double dynamicPadding = screenWidth < 400 ? 16.0 : 24.0; 
+                                final double buttonPadding = screenWidth < 400 ? 10.0 : 14.0;
+
+                                return Dialog(
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                  elevation: 0,
+                                  backgroundColor: Colors.white, // atau transparent?
+                                  insetPadding: const EdgeInsets.symmetric(horizontal: 16),
+                                  child: Container(
+                                    constraints: BoxConstraints(
+                                      maxHeight: MediaQuery.of(context).size.height * 0.9,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(color: black, width: 2),
+                                      boxShadow: const [
+                                        BoxShadow(color: black, offset: Offset(6, 6), blurRadius: 0),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        // header form
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                                          decoration: const BoxDecoration(
+                                            color: cream,
+                                            borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
+                                            border: Border(bottom: BorderSide(color: gray, width: 1)),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              const Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    "Hapus Match Ini?",
+                                                    style: TextStyle(
+                                                        fontSize: 18, fontWeight: FontWeight.w900, color: black),
+                                                  ),
+                                                ],
+                                              ),
+                                              IconButton(
+                                                icon: const Icon(Icons.close, color: black),
+                                                onPressed: () => Navigator.pop(context),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                        const SizedBox(height: 16),
+
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: OutlinedButton(
+                                                onPressed: () => Navigator.pop(context),
+                                                style: OutlinedButton.styleFrom(
+                                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                                  side: const BorderSide(color: black, width: 2),
+                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                                  foregroundColor: black,
+                                                  backgroundColor: white,
+                                                ),
+                                                child: const Text("Cancel", style: TextStyle(fontWeight: FontWeight.bold)),
+                                              ),
+                                            ),
+
+                                            const SizedBox(width: 12),
+
+                                            Expanded(
+                                              child: OutlinedButton(
+                                                style: OutlinedButton.styleFrom(
+                                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                                  side: const BorderSide(color: black, width: 2),
+                                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                                  foregroundColor: white,
+                                                  backgroundColor: red,
+                                                ),
+                                                onPressed: () async {
+                                                Navigator.of(context).pop(); // tutup dialog dulu
+                                                
+                                                try {
+                                                  // kirim request ke Django
+                                                  final response = await request.postJson(
+                                                    'http://localhost:8000/match/delete-match-flutter/${match.id}/', 
+                                                    jsonEncode({"id": match.id}),
+                                                  );
+
+                                                  // cek status response, refresh kalau berhasil hapus
+                                                  if (response['status'] == 'success') {
+                                                    setState(() {
+                                                    });
+                                                    
+                                                    if (context.mounted) {
+                                                      ScaffoldMessenger.of(context).showSnackBar(
+                                                        const SnackBar(content: Text("Match berhasil dihapus!")),
+                                                      );
+                                                    }
+                                                  } else {
+                                                    if (context.mounted) {
+                                                      ScaffoldMessenger.of(context).showSnackBar(
+                                                        const SnackBar(content: Text("Gagal menghapus match.")),
+                                                      );
+                                                    }
+                                                  }
+                                                } catch (e) {
+                                                  if (context.mounted) {
+                                                    ScaffoldMessenger.of(context).showSnackBar(
+                                                      SnackBar(content: Text("Error: $e")),
+                                                    );
+                                                  }
+                                                }
+                                              },
+                                              child: const Text("Delete", style: TextStyle(color: white, fontWeight: FontWeight.bold)),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 16),
+                                      ],
                                     ),
                                   ),
-                                  content: Text("Apakah kamu yakin ingin menghapus pertandingan:\n${titled(match.jenisPertandingan)} - ${match.timTuanRumah} vs ${match.timTamu} (${match.tanggal})?",
-                                            style: TextStyle(color: black, fontWeight: FontWeight.normal)),
-                                  actions: [
-                                    TextButton( // jika pilih cancel
-                                      onPressed: () {
-                                        Navigator.of(context).pop(); // tutup dialog (batal)
-                                      },
-                                      child: const Text("Cancel", style: TextStyle(color: gray),),
-                                    ),
-
-                                    TextButton( // jika pilih delete
-                                      onPressed: () async {
-                                        Navigator.of(context).pop(); // tutup dialog dulu
-                                        
-                                        // TODO: panggil fungsi request delete ke server Django
-                                        // final response = await request.postJson(
-                                        //   'http://localhost:8000/match/${match.id}/delete_match_flutter/', 
-                                        //   jsonEncode({"id": match.id})
-                                        // );
-                                        
-                                        // // Jika berhasil, refresh halaman
-                                        // setState(() {
-                                        //   // refresh FutureBuilder
-                                        //   futureMatches = fetchMatch(request); 
-                                        // });
-                                        
-                                        // ScaffoldMessenger.of(context).showSnackBar(
-                                        //   const SnackBar(content: Text("Match deleted successfully")),
-                                        // );
-                                      },
-                                      child: const Text("Delete", style: TextStyle(color: red)),
-                                    ),
-                                  ],
                                 );
                               },
                             );

@@ -9,9 +9,8 @@ import 'package:garuda_lounge_mobile/main.dart';
 import 'package:garuda_lounge_mobile/models/match_entry.dart';
 
 class MatchFormPage extends StatefulWidget {
-  const MatchFormPage({super.key}); // untuk bedakan ini edit match yang duah ada atau nambah match baru
-
   final MatchEntry? match;
+  const MatchFormPage({super.key, this.match}); // untuk bedakan ini edit match yang duah ada atau nambah match baru
 
   @override
   State<MatchFormPage> createState() => _MatchFormPage();
@@ -22,31 +21,31 @@ class _MatchFormPage extends State<MatchFormPage> {
 
   String _jenisPertandingan = "pertandingan persahabatan"; // default
 
-  String _timTuanRumah = "-";
-  String _timTamu = "-";
+  String _timTuanRumah = "";
+  String _timTamu = "";
 
-  String _benderaTuanRumah = "-";
-  String _benderaTamu = "-";
+  String _benderaTuanRumah = "";
+  String _benderaTamu = "";
 
-  String _tanggal = "-";
-  String _stadion = "-";
+  String _tanggal = "";
+  String _stadion = "";
 
   int _skorTuanRumah = 0;
   int _skorTamu = 0;
 
-  String _pencetakGolTuanRumah = "-";
-  String _pencetakGolTamu = "-";
+  String _pencetakGolTuanRumah = "";
+  String _pencetakGolTamu = "";
 
-  String _starterTuanRumah = "-";
-  String _starterTamu = "-";
+  String _starterTuanRumah = "";
+  String _starterTamu = "";
 
-  String _penggantiTuanRumah = "-";
-  String _penggantiTamu = "-";
+  String _penggantiTuanRumah = "";
+  String _penggantiTamu = "";
 
-  String _manajerTuanRumah = "-";
-  String _manajerTamu = "-";
+  String _manajerTuanRumah = "";
+  String _manajerTamu = "";
 
-  String _highlight = "-";
+  String _highlight = "";
 
   // Statistik
   int _penguasaanBolaTuanRumah = 0;
@@ -96,17 +95,41 @@ class _MatchFormPage extends State<MatchFormPage> {
       _tanggal = widget.match!.tanggal;
       _stadion = widget.match!.stadion;
       
-      // Hati-hati konversi String (dari Model) ke Int (ke State Form)
+      // janlup konversi string (dari model) ke int (ke state form ini)
       _skorTuanRumah = int.tryParse(widget.match!.skorTuanRumah) ?? 0;
       _skorTamu = int.tryParse(widget.match!.skorTamu) ?? 0;
       
+      // mapping field yang string ke string
       _pencetakGolTuanRumah = widget.match!.pencetakGolTuanRumah;
       _pencetakGolTamu = widget.match!.pencetakGolTamu;
-      // ... Lanjutkan mapping untuk SEMUA field lainnya ...
+      _starterTuanRumah = widget.match!.starterTuanRumah;
+      _starterTamu = widget.match!.starterTamu;
+      _penggantiTuanRumah = widget.match!.penggantiTuanRumah;
+      _penggantiTamu = widget.match!.penggantiTamu;
+      _manajerTuanRumah = widget.match!.manajerTuanRumah;
+      _manajerTamu = widget.match!.manajerTamu;
+      _highlight = widget.match!.highlight;
       
-      // Contoh statistik (String -> Int)
+      // statistik ini dikonversi juga dari string ke int
       _penguasaanBolaTuanRumah = int.tryParse(widget.match!.penguasaanBolaTuanRumah) ?? 0;
-      // dst...
+      _penguasaanBolaTamu = int.tryParse(widget.match!.penguasaanBolaTamu) ?? 0;
+      _tembakanTuanRumah = int.tryParse(widget.match!.tembakanTuanRumah) ?? 0;
+      _tembakanTamu = int.tryParse(widget.match!.tembakanTamu) ?? 0;
+      _onTargetTuanRumah = int.tryParse(widget.match!.onTargetTuanRumah) ?? 0;
+      _onTargetTamu = int.tryParse(widget.match!.onTargetTamu) ?? 0;
+      _akurasiUmpanTuanRumah = int.tryParse(widget.match!.akurasiUmpanTuanRumah) ?? 0;
+      _akurasiUmpanTamu = int.tryParse(widget.match!.akurasiUmpanTamu) ?? 0;
+      _pelanggaranTuanRumah = int.tryParse(widget.match!.pelanggaranTuanRumah) ?? 0;
+      _pelanggaranTamu = int.tryParse(widget.match!.pelanggaranTamu) ?? 0;
+      _kartuKuningTuanRumah = int.tryParse(widget.match!.kartuKuningTuanRumah) ?? 0;
+      _kartuKuningTamu = int.tryParse(widget.match!.kartuKuningTamu) ?? 0;
+      _kartuMerahTuanRumah = int.tryParse(widget.match!.kartuMerahTuanRumah) ?? 0;
+      _kartuMerahTamu = int.tryParse(widget.match!.kartuMerahTamu) ?? 0;
+      _offsideTuanRumah = int.tryParse(widget.match!.offsideTuanRumah) ?? 0;
+      _offsideTamu = int.tryParse(widget.match!.offsideTamu) ?? 0;
+      _cornerTuanRumah = int.tryParse(widget.match!.cornerTuanRumah) ?? 0;
+      _cornerTamu = int.tryParse(widget.match!.cornerTamu) ?? 0;
+    
     }
   }
 
@@ -144,16 +167,18 @@ class _MatchFormPage extends State<MatchFormPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Tambah Match Baru",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w900, color: black),
-                      ),
-                      Text("Masukkan Detail Pertandingan",
-                          style: TextStyle(fontSize: 12, color: black)),
+                      if (widget.match == null) ... [
+                        const Text("Tambah Match Baru", style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900, color: black),),
+                        const Text("Masukkan Detail Pertandingan",style: TextStyle(fontSize: 16, color: black)),
+                      ]
+                      else ... [
+                        const Text("Edit Detail Match", style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900, color: black),),
+                        const Text("Perbarui Detail Pertandingan Ini",style: TextStyle(fontSize: 16, color: black)),
+                      ]
+
                     ],
                   ),
                   IconButton(
@@ -176,6 +201,7 @@ class _MatchFormPage extends State<MatchFormPage> {
                       // --- Jenis Pertandingan ---
                       _buildLabel("Jenis Pertandingan"),
                       DropdownButtonFormField<String>(
+                        initialValue: _jenisPertandingan,
                         value: _jenisPertandingan,
                         decoration: _inputDecoration(),
                         items: _listJenisPertandingan.map((String item) {
@@ -197,6 +223,7 @@ class _MatchFormPage extends State<MatchFormPage> {
                               children: [
                                 _buildLabel("Tim Tuan Rumah"),
                                 TextFormField(
+                                  initialValue: _timTuanRumah,
                                   decoration: _inputDecoration(hint: "Nama Tim"),
                                   onChanged: (v) => _timTuanRumah = v,
                                   validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
@@ -212,6 +239,7 @@ class _MatchFormPage extends State<MatchFormPage> {
                               children: [
                                 _buildLabel("Skor"),
                                 TextFormField(
+                                  initialValue: _skorTuanRumah.toString(),
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                   decoration: _inputDecoration(),
@@ -232,6 +260,7 @@ class _MatchFormPage extends State<MatchFormPage> {
 
                       _buildLabel("URL Bendera Tuan Rumah"),
                       TextFormField(
+                        initialValue: _benderaTuanRumah,
                         maxLength: 500,
                         decoration: _inputDecoration(hint: "https://..."),
                         onChanged: (v) => _benderaTuanRumah = v,
@@ -250,6 +279,7 @@ class _MatchFormPage extends State<MatchFormPage> {
                               children: [
                                 _buildLabel("Tim Tamu"),
                                 TextFormField(
+                                  initialValue: _timTamu,
                                   decoration: _inputDecoration(hint: "Nama Tim"),
                                   onChanged: (v) => _timTamu = v,
                                   validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
@@ -265,6 +295,7 @@ class _MatchFormPage extends State<MatchFormPage> {
                               children: [
                                 _buildLabel("Skor"),
                                 TextFormField(
+                                  initialValue: _skorTamu.toString(),
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                   decoration: _inputDecoration(),
@@ -285,6 +316,7 @@ class _MatchFormPage extends State<MatchFormPage> {
 
                       _buildLabel("URL Bendera Tamu"),
                       TextFormField(
+                        initialValue: _benderaTamu,
                         maxLength: 500,
                         decoration: _inputDecoration(hint: "https://..."),
                         onChanged: (v) => _benderaTamu = v,
@@ -298,6 +330,7 @@ class _MatchFormPage extends State<MatchFormPage> {
           
                       _buildLabel("Tanggal (dd-mm-yyyy)"),
                       TextFormField(
+                        initialValue: _tanggal,
                         decoration: _inputDecoration(hint: "Contoh: 21-12-2025"),
                         onChanged: (v) => _tanggal = v,
                         validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
@@ -306,6 +339,7 @@ class _MatchFormPage extends State<MatchFormPage> {
                       
                       _buildLabel("Stadion"),
                       TextFormField(
+                        initialValue: _stadion,
                         decoration: _inputDecoration(),
                         onChanged: (v) => _stadion = v,
                         validator: (v) => v!.isEmpty ? "Wajib diisi" : null,
@@ -314,6 +348,7 @@ class _MatchFormPage extends State<MatchFormPage> {
 
                       _buildLabel("URL Highlight"),
                       TextFormField(
+                        initialValue: _highlight,
                         maxLength: 500,
                         decoration: _inputDecoration(hint: "https://..."),
                         onChanged: (v) => _highlight = v,
@@ -323,270 +358,377 @@ class _MatchFormPage extends State<MatchFormPage> {
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Pencetak Gol Tuan Rumah"),
                       TextFormField(
+                        initialValue: _pencetakGolTuanRumah,
                         decoration: _inputDecoration(hint: "pemain1;pemain2;..."),
                         onChanged: (v) => _pencetakGolTuanRumah = v,
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Pencetak Gol Tamu"),
                       TextFormField(
+                        initialValue: _pencetakGolTamu,
                         decoration: _inputDecoration(hint: "pemain1;pemain2;..."),
                         onChanged: (v) => _pencetakGolTamu = v,
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Starter Tuan Rumah"),
                       TextFormField(
+                        initialValue: _starterTuanRumah,
                         decoration: _inputDecoration(hint: "pemain1;pemain2;..."),
                         onChanged: (v) => _starterTuanRumah = v,
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Starter Tamu"),
                       TextFormField(
+                        initialValue: _starterTamu,
                         decoration: _inputDecoration(hint: "pemain1;pemain2;..."),
                         onChanged: (v) => _starterTamu = v,
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Pengganti Tuan Rumah"),
                       TextFormField(
+                        initialValue: _penggantiTuanRumah,
                         decoration: _inputDecoration(hint: "pemain1;pemain2;..."),
                         onChanged: (v) => _penggantiTuanRumah = v,
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Pengganti Tamu"),
                       TextFormField(
+                        initialValue: _penggantiTamu,
                         decoration: _inputDecoration(hint: "pemain1;pemain2;..."),
                         onChanged: (v) => _penggantiTamu = v,
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Manajer Tuan Rumah"),
                       TextFormField(
+                        initialValue: _manajerTuanRumah,
                         decoration: _inputDecoration(),
                         onChanged: (v) => _manajerTuanRumah = v,
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Manajer Tamu"),
                       TextFormField(
+                        initialValue: _manajerTamu,
                         decoration: _inputDecoration(),
                         onChanged: (v) => _manajerTamu = v,
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Penguasaan Bola Tuan Rumah"),
                       TextFormField(
+                        initialValue: _penguasaanBolaTuanRumah.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _penguasaanBolaTuanRumah = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Penguasaan Bola Tamu"),
                       TextFormField(
+                        initialValue: _penguasaanBolaTamu.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _penguasaanBolaTamu = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Tembakan Tuan Rumah"),
                       TextFormField(
+                        initialValue: _tembakanTuanRumah.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _tembakanTuanRumah = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Tembakan Tamu"),
                       TextFormField(
+                        initialValue: _tembakanTamu.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _tembakanTamu = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("On Target Tuan Rumah"),
                       TextFormField(
+                        initialValue: _onTargetTuanRumah.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _onTargetTuanRumah = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("On Target Tamu"),
                       TextFormField(
+                        initialValue: _onTargetTamu.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _onTargetTamu = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Akurasi Umpan Tuan Rumah"),
                       TextFormField(
+                        initialValue: _akurasiUmpanTuanRumah.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _akurasiUmpanTuanRumah = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Akurasi umpan Tamu"),
                       TextFormField(
+                        initialValue: _akurasiUmpanTamu.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _akurasiUmpanTamu = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Pelanggaran Tuan Rumah"),
                       TextFormField(
+                        initialValue: _pelanggaranTuanRumah.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _pelanggaranTuanRumah = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Pelanggaran Tamu"),
                       TextFormField(
+                        initialValue: _pelanggaranTamu.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _pelanggaranTamu = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Kartu Kuning Tuan Rumah"),
                       TextFormField(
+                        initialValue: _kartuKuningTuanRumah.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _kartuKuningTuanRumah = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Kartu Kuning Tamu"),
                       TextFormField(
+                        initialValue: _kartuKuningTamu.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _kartuKuningTamu = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Kartu Merah Tuan Rumah"),
                       TextFormField(
+                        initialValue: _kartuMerahTuanRumah.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _kartuMerahTuanRumah = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Kartu Merah Tamu"),
                       TextFormField(
+                        initialValue: _kartuMerahTamu.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _kartuMerahTamu = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Offside Tuan Rumah"),
                       TextFormField(
+                        initialValue: _offsideTuanRumah.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _offsideTuanRumah = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Offside Tamu"),
                       TextFormField(
+                        initialValue: _offsideTamu.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _offsideTamu = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Corner Tuan Rumah"),
                       TextFormField(
+                        initialValue: _cornerTuanRumah.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _cornerTuanRumah = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
 
                       _buildLabel("Corner Tamu"),
                       TextFormField(
+                        initialValue: _cornerTamu.toString(),
                         keyboardType: TextInputType.number,
                         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                         decoration: _inputDecoration(),
                         onChanged: (v) => _cornerTamu = int.tryParse(v) ?? 0,
                         validator: (v) {
-                          if (int.tryParse(v!)! < 0) return "Tidak boleh angka negatif"; 
+                          if (v == null || v.isEmpty) return "Wajib diisi";
+                          final number = int.tryParse(v);
+                          if (number == null) return "Harus angka";
+                          if (number < 0) return "Tidak boleh negatif";
                           return null;
                         },
                       ),
+                      const SizedBox(height: 10),
 
                     ],
                   ),
@@ -673,8 +815,14 @@ class _MatchFormPage extends State<MatchFormPage> {
 
   Future<void> _submitData(CookieRequest request) async {
     try {
+      String url;
+      if (widget.match == null) {
+        url = "http://localhost:8000/match/create-match-flutter/";
+      } else {
+        url = "http://localhost:8000/match/edit-match-flutter/${widget.match!.id}/";
+      }
       final response = await request.postJson(
-        "http://localhost:8000/create-match-flutter/", 
+        url, 
         jsonEncode({
           "jenis_pertandingan": _jenisPertandingan,
           "tim_tuan_rumah": _timTuanRumah,
@@ -721,13 +869,12 @@ class _MatchFormPage extends State<MatchFormPage> {
         if (response['status'] == 'success') {
           // tutup modal dan kirim sinyal sukses
           Navigator.pop(context, true); 
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Match berhasil ditambahkan!"), backgroundColor: Colors.green),
-          );
+          widget.match == null 
+            ? ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Match berhasil ditambahkan!"), backgroundColor: Colors.green))
+            :ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Match berhasil diperbarui!"), backgroundColor: Colors.green));
+          
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Gagal menyimpan, cek data kembali."), backgroundColor: Colors.red),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Gagal menyimpan, cek data kembali."), backgroundColor: Colors.red));
         }
       }
     } catch (e) {
