@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../models/player_entry.dart';
 import '../screens/player_detail.dart';
-// import '../screens/player_edit.dart';
+import '../screens/active_player_edit.dart';
 
 class PlayerCard extends StatelessWidget {
   final PlayerEntry player;
@@ -15,9 +15,9 @@ class PlayerCard extends StatelessWidget {
   const PlayerCard({
     super.key,
     required this.player,
+    required this.baseUrl,
     this.imageUrl,
     this.onChanged,
-    this.baseUrl = "http://localhost:8000",
   });
 
   @override
@@ -36,7 +36,7 @@ class PlayerCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           AspectRatio(
-            aspectRatio: 4 / 3,
+            aspectRatio: 4.3 / 3,
             child: imageUrl != null && imageUrl!.isNotEmpty
                 ? Image.network(
               imageUrl!,
@@ -54,12 +54,14 @@ class PlayerCard extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   player.nama,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontWeight: FontWeight.w800,
                     fontSize: 16,
@@ -69,14 +71,16 @@ class PlayerCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   "$posisiText • ${player.klub}",
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontSize: 13),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 4),
                 Text(
                   "Umur: ${player.umur} tahun",
                   style: const TextStyle(fontSize: 12),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 4),
                 Text(
                   "Market Value: €${player.marketValue.toStringAsFixed(2)}",
                   style: const TextStyle(
@@ -84,18 +88,16 @@ class PlayerCard extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 12),
-
-                // DETAIL
+                const SizedBox(height: 10),
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton(
                     style: FilledButton.styleFrom(
                       backgroundColor: const Color(0xFFAA1515),
                       foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     onPressed: () {
@@ -108,50 +110,36 @@ class PlayerCard extends StatelessWidget {
                     },
                     child: const Text(
                       "Detail Pemain",
-                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                      style: TextStyle(fontWeight: FontWeight.w700),
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
-                // EDIT (Outlined)
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFFAA1515),
-                      side: const BorderSide(color: Color(0xFFAA1515), width: 0.6),
+                      side:
+                      const BorderSide(color: Color(0xFFAA1515), width: 0.6),
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     onPressed: () async {
-                      // Kalau kamu belum bikin page edit, biarin dulu tombolnya disabled/atau bikin dialog.
-                      // Contoh kalau udah bikin page edit:
-                      //
-                      // final ok = await Navigator.push<bool>(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (_) => PlayerEditPage(player: player, baseUrl: baseUrl),
-                      //   ),
-                      // );
-                      // if (ok == true) onChanged?.call();
-
-                      showDialog(
+                      final ok = await showDialog<bool>(
                         context: context,
-                        builder: (_) => AlertDialog(
-                          title: const Text("Edit belum dibuat"),
-                          content: const Text("Bikin halaman edit dulu ya. Nanti tombol ini bisa diarahkan ke page edit."),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text("OK"),
-                            )
-                          ],
+                        barrierDismissible: true,
+                        builder: (_) => EditPlayerForm(
+                          player: player,
+                          baseUrl: baseUrl,
                         ),
                       );
+
+                      if (ok == true) {
+                        onChanged?.call(); // refresh list
+                      }
                     },
                     child: const Text(
                       "Edit",
@@ -159,19 +147,17 @@ class PlayerCard extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 10),
-
-                // DELETE (Outlined)
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFFAA1515),
-                      side: const BorderSide(color: Color(0xFFAA1515), width: 0.6),
+                      side:
+                      const BorderSide(color: Color(0xFFAA1515), width: 0.6),
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                     onPressed: () async {
@@ -234,12 +220,10 @@ class PlayerCard extends StatelessWidget {
   }
 
   Future<bool> _deletePlayer(CookieRequest request) async {
+    final url = "$baseUrl/ProfileAktif/delete-flutter/${player.id}/";
     try {
-      final url = "$baseUrl/ProfileAktif/player/${player.id}/delete/";
       final res = await request.post(url, {});
-      if (res is Map && res["success"] == true) return true;
-      if (res is String) return true; // fallback kalau backend balikin string
-      return false;
+      return (res is Map && res["status"] == "success");
     } catch (_) {
       return false;
     }
