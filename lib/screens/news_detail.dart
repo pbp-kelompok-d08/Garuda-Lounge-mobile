@@ -40,7 +40,7 @@ class NewsDetailPage extends StatelessWidget {
             // ===== THUMBNAIL =====
             if (news.thumbnail.isNotEmpty)
               Image.network(
-                'http://localhost:8000/news/proxy-image/?url=${Uri.encodeComponent(news.thumbnail)}',
+                'https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/news/proxy-image/?url=${Uri.encodeComponent(news.thumbnail)}',
                 width: double.infinity,
                 height: 250,
                 fit: BoxFit.cover,

@@ -17,7 +17,7 @@ class EditPlayerForm extends StatefulWidget {
   const EditPlayerForm({
     super.key,
     required this.player,
-    this.baseUrl = "http://localhost:8000",
+    this.baseUrl = "https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id",
   });
 
   @override

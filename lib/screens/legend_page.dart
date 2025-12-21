@@ -15,7 +15,7 @@ class _LegendPlayersPageState extends State<LegendPlayersPage> {
   Future<List<LegendEntry>>? _future;
 
   Future<List<LegendEntry>> _fetch(CookieRequest req) async {
-    final res = await req.get("http://127.0.0.1:8000/ProfileLegend/json/");
+    final res = await req.get("https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/ProfileLegend/json/");
     return List<LegendEntry>.from(res.map((i) => LegendEntry.fromJson(i)));
   }
 

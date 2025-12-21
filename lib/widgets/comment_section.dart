@@ -21,7 +21,7 @@ class _CommentSectionState extends State<CommentSection> {
   bool _loading = false;
 
   Future<List<Map<String, dynamic>>> _fetchComments(CookieRequest request) async {
-    final url = "http://localhost:8000/news/api/${widget.newsId}/comments/";
+    final url = "https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/news/api/${widget.newsId}/comments/";
     final res = await request.get(url);
 
     // res biasanya bentuknya: {"comments": [...]}
@@ -35,7 +35,7 @@ class _CommentSectionState extends State<CommentSection> {
 
     setState(() => _loading = true);
 
-    final url = "http://localhost:8000/news/api/${widget.newsId}/comments/add/";
+    final url = "https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/news/api/${widget.newsId}/comments/add/";
 
     try {
       final res = await request.postJson(

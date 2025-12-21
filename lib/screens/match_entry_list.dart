@@ -39,7 +39,7 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
     // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
     // If you using chrome,  use URL http://localhost:8000
     
-    final response = await request.get('http://localhost:8000/match/json/');
+    final response = await request.get('https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/match/json/');
     
     // Decode response to json format
     var data = response;
@@ -419,7 +419,7 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
                                                         try {
                                                           // kirim request ke Django
                                                           final response = await request.postJson(
-                                                            'http://localhost:8000/match/delete-match-flutter/${match.id}/', 
+                                                            'https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/match/delete-match-flutter/${match.id}/', 
                                                             jsonEncode({"id": match.id}),
                                                           );
 

@@ -18,7 +18,7 @@ class NewsEntryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const String baseUrl = 'http://127.0.0.1:8000';
+    const String baseUrl = 'https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id';
 
     final String thumb = news.thumbnail.trim();
     final String imgUrl =

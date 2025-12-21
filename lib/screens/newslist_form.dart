@@ -59,7 +59,7 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
 
     try {
       final response = await widget.request.postJson(
-        "http://localhost:8000/news/create-flutter/",
+        "https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/news/create-flutter/",
         jsonEncode({
           "title": _title,
           "content": _content,

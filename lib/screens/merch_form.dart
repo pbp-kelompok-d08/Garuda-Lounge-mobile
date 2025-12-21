@@ -313,9 +313,9 @@ class _MerchFormPageState extends State<MerchFormPage> {
     try {
       String url;
       if (widget.merch == null) {
-        url = "http://localhost:8000/merchandise/create-flutter/";
+        url = "https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/merchandise/create-flutter/";
       } else {
-        url = "http://localhost:8000/merchandise/edit-flutter/${widget.merch!.id}/";
+        url = "https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/merchandise/edit-flutter/${widget.merch!.id}/";
       }
       final response = await request.postJson(
         url, 

@@ -22,7 +22,7 @@ class _ActivePlayersPageState extends State<ActivePlayersPage> {
   String _selectedPositionCode = "";
   Future<List<PlayerEntry>>? _futurePlayers;
 
-  String get _baseUrl => "http://127.0.0.1:8000";
+  String get _baseUrl => "https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id";
 
   Future<List<PlayerEntry>> fetchPlayers(CookieRequest request) async {
     final response = await request.get("$_baseUrl/ProfileAktif/json/");
