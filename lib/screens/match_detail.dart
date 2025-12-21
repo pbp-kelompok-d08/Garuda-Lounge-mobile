@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:garuda_lounge_mobile/models/match_entry.dart';
 import 'package:garuda_lounge_mobile/main.dart';
 import 'package:garuda_lounge_mobile/widgets/match_entry_card.dart';
-// import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MatchDetailPage extends StatefulWidget {
   final MatchEntry match;
@@ -21,12 +21,12 @@ class _MatchDetailPageState extends State<MatchDetailPage> {
     return data.split(';').map((e) => e.trim()).toList(); 
   }
 
-  // Future<void> _launchURL(String url) async {
-  //   final Uri uri = Uri.parse(url);
-  //   if (!await launchUrl(uri)) {
-  //     throw Exception('Could not launch $uri');
-  //   }
-  // }
+  Future<void> _launchURL(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri)) {
+      throw Exception('Tidak bisa melihat link highlight: $uri');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -182,8 +182,8 @@ class _MatchDetailPageState extends State<MatchDetailPage> {
                     decoration: BoxDecoration(border: Border(top: BorderSide(color: red))),
                     child: Center (
                       child: ElevatedButton(
-                        // onPressed: () => _launchURL(match.highlight),
-                        onPressed: () => (match.highlight),
+                        onPressed: () => _launchURL(match.highlight),
+                        //onPressed: () => (match.highlight),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: red, 
                           foregroundColor: Colors.white,
