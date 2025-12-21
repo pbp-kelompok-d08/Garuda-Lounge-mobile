@@ -83,7 +83,8 @@ flutter pub add http
 * Menampilkan data di UI dengan cara menghubngkan fungsi fetch data dengan tampilan layar menggunakan `FutureBuilder` 
 
 ## Link APK dan Desain FIGMA
-Link APK :  (menyusul)  
+[![Build Status](https://app.bitrise.io/app/6e661066-144f-4b0a-8308-bac1a2489d78/status.svg?token=DYOLZ44hHOCzq5jh__Hg-w&branch=master)](https://app.bitrise.io/app/6e661066-144f-4b0a-8308-bac1a2489d78)
+Link APK : https://app.bitrise.io/app/6e661066-144f-4b0a-8308-bac1a2489d78/installable-artifacts/bb91e243818cd88b/public-install-page/95e094100aeb08b77df91c8cecec3b86
 Link FIGMA : https://www.figma.com/design/XNzG0SDEzs3QQ7SuMVuUoC/GarudaLounge?node-id=0-1&t=Dey5VhTB4bqIc8u5-1 
 
 
