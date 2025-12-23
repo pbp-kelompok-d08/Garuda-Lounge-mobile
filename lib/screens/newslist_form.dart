@@ -76,7 +76,7 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
           status == true || status == "success" || status == "ok";
 
       if (isSuccess) {
-        Navigator.pop(context);
+        //Navigator.pop(context);
         widget.onSuccess?.call();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("News successfully saved!")),
