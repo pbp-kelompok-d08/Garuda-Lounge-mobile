@@ -11,6 +11,7 @@ class PlayerCard extends StatelessWidget {
   final String? imageUrl;
   final VoidCallback? onChanged;
   final String baseUrl;
+  final bool isStaff; // buat cek status user
 
   const PlayerCard({
     super.key,
@@ -18,6 +19,7 @@ class PlayerCard extends StatelessWidget {
     required this.baseUrl,
     this.imageUrl,
     this.onChanged,
+    required this.isStaff,
   });
 
   @override
@@ -114,82 +116,87 @@ class PlayerCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFFAA1515),
-                      side:
-                      const BorderSide(color: Color(0xFFAA1515), width: 0.6),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    onPressed: () async {
-                      final ok = await showDialog<bool>(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (_) => EditPlayerForm(
-                          player: player,
-                          baseUrl: baseUrl,
+
+                if (isStaff) ...[
+                  const SizedBox(height: 10),
+
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFFAA1515),
+                        side:
+                        const BorderSide(color: Color(0xFFAA1515), width: 0.6),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      );
+                      ),
+                      onPressed: () async {
+                        final ok = await showDialog<bool>(
+                          context: context,
+                          barrierDismissible: true,
+                          builder: (_) => EditPlayerForm(
+                            player: player,
+                            baseUrl: baseUrl,
+                          ),
+                        );
 
-                      if (ok == true) {
-                        onChanged?.call(); // refresh list
-                      }
-                    },
+                        if (ok == true) {
+                          onChanged?.call(); // refresh list
+                        }
+                      },
 
-                    // TODO ✅ button ini cuma bisa diakses sama admin
-                    child: const Text(
-                      "Edit",
-                      style: TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFFAA1515),
-                      side:
-                      const BorderSide(color: Color(0xFFAA1515), width: 0.6),
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                      // TODO ✅ button ini cuma bisa diakses sama admin
+                      child: const Text(
+                        "Edit",
+                        style: TextStyle(fontWeight: FontWeight.w700),
                       ),
                     ),
-                    onPressed: () async {
-                      final ok = await _confirmDelete(context);
-                      if (ok != true) return;
+                  ),
 
-                      final request = context.read<CookieRequest>();
-                      final success = await _deletePlayer(request);
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFFAA1515),
+                        side:
+                        const BorderSide(color: Color(0xFFAA1515), width: 0.6),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () async {
+                        final ok = await _confirmDelete(context);
+                        if (ok != true) return;
 
-                      if (!context.mounted) return;
+                        final request = context.read<CookieRequest>();
+                        final success = await _deletePlayer(request);
 
-                      if (success) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Pemain berhasil dihapus")),
-                        );
-                        onChanged?.call();
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Gagal menghapus pemain")),
-                        );
-                      }
-                    },
+                        if (!context.mounted) return;
 
-                    // TODO ✅ button ini cuma bisa diakses sama admin
-                    child: const Text(
-                      "Delete",
-                      style: TextStyle(fontWeight: FontWeight.w700),
+                        if (success) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Pemain berhasil dihapus")),
+                          );
+                          onChanged?.call();
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Gagal menghapus pemain")),
+                          );
+                        }
+                      },
+
+                      // TODO ✅ button ini cuma bisa diakses sama admin
+                      child: const Text(
+                        "Delete",
+                        style: TextStyle(fontWeight: FontWeight.w700),
+                      ),
                     ),
                   ),
-                ),
+                ]
               ],
             ),
           ),

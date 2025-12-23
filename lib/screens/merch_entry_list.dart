@@ -57,7 +57,7 @@ class _MerchEntryListPageState extends State<MerchEntryListPage> {
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
     final userProvider = context.watch<UserProvider>(); 
-    final isStaff = userProvider.isStaff; // ambil data dari provider
+    final isStaff = userProvider.isStaff; // ambil status user dari provider
     Future<List<MerchEntry>> futureMerch = fetchMerch(request);
     return Scaffold(
       appBar: AppBar(
