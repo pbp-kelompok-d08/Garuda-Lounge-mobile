@@ -3,6 +3,8 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import '../models/legend_entry.dart';
 import 'legend_form.dart';
+import 'package:garuda_lounge_mobile/provider/user_provider.dart';
+import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
 
 class LegendPlayersPage extends StatefulWidget {
   const LegendPlayersPage({super.key});
@@ -11,6 +13,21 @@ class LegendPlayersPage extends StatefulWidget {
 }
 
 class _LegendPlayersPageState extends State<LegendPlayersPage> {
+
+  // kita mau fetch status user sekali saja saat halaman dibuka
+  // pakai addPostFrameCallback karena kita butuh context provider
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+       final request = context.read<CookieRequest>();
+       final userProvider = context.read<UserProvider>();
+       
+       // ini tidak jalan kalau sudahpernah fetch
+       userProvider.fetchUserStatus(request);
+    });
+  }
+
   String _selectedPos = "";
   Future<List<LegendEntry>>? _future;
 
@@ -22,9 +39,12 @@ class _LegendPlayersPageState extends State<LegendPlayersPage> {
   @override
   Widget build(BuildContext context) {
     final req = context.watch<CookieRequest>();
+    final userProvider = context.watch<UserProvider>(); 
+    final isStaff = userProvider.isStaff; // ambil status user dari provider
     return Scaffold(
       backgroundColor: dsCream,
       appBar: AppBar(title: const Text("GARUDA LEGENDS", style: TextStyle(color: dsRed, fontWeight: FontWeight.w900)), backgroundColor: dsWhite),
+      drawer: LeftDrawer(),
       body: FutureBuilder<List<LegendEntry>>(
         future: _future ?? _fetch(req),
         builder: (context, snapshot) {
@@ -46,14 +66,16 @@ class _LegendPlayersPageState extends State<LegendPlayersPage> {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: dsRed),
-                      onPressed: () async {
-                        final res = await showDialog<bool>(context: context, builder: (_) => const LegendPlayerForm());
-                        if (res == true) setState(() => _future = _fetch(req));
-                      },
-                      child: const Text("+ LEGEND", style: TextStyle(color: dsWhite)),
-                    ),
+
+                    if (isStaff)
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(backgroundColor: dsRed),
+                        onPressed: () async {
+                          final res = await showDialog<bool>(context: context, builder: (_) => const LegendPlayerForm());
+                          if (res == true) setState(() => _future = _fetch(req));
+                        },
+                        child: const Text("+ LEGEND", style: TextStyle(color: dsWhite)),
+                      ),
                   ],
                 ),
               ),
@@ -62,7 +84,7 @@ class _LegendPlayersPageState extends State<LegendPlayersPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 15, mainAxisSpacing: 15, childAspectRatio: 0.75),
                   itemCount: list.length,
-                  itemBuilder: (context, index) => _LegendCard(legend: list[index], onRefresh: () => setState(() => _future = _fetch(req))),
+                  itemBuilder: (context, index) => _LegendCard(legend: list[index], onRefresh: () => setState(() => _future = _fetch(req)), isStaff: isStaff),
                 ),
               ),
             ],
@@ -76,7 +98,8 @@ class _LegendPlayersPageState extends State<LegendPlayersPage> {
 class _LegendCard extends StatelessWidget {
   final LegendEntry legend;
   final VoidCallback onRefresh;
-  const _LegendCard({required this.legend, required this.onRefresh});
+  final bool isStaff;
+  const _LegendCard({required this.legend, required this.onRefresh, required this.isStaff});
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +118,7 @@ class _LegendCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(backgroundColor: dsBlack, minimumSize: const Size(double.infinity, 30)),
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => LegendDetailPage(legend: legend, onRefresh: onRefresh))),
+                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => LegendDetailPage(legend: legend, onRefresh: onRefresh, isStaff: isStaff,))),
                     child: const Text("DETAIL", style: TextStyle(color: dsWhite, fontSize: 10)),
                   ),
                 ],
@@ -111,7 +134,8 @@ class _LegendCard extends StatelessWidget {
 class LegendDetailPage extends StatelessWidget {
   final LegendEntry legend;
   final VoidCallback onRefresh;
-  const LegendDetailPage({super.key, required this.legend, required this.onRefresh});
+  final bool isStaff;
+  const LegendDetailPage({super.key, required this.legend, required this.onRefresh, required this.isStaff});
 
   @override
   Widget build(BuildContext context) {
@@ -137,17 +161,19 @@ class LegendDetailPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.edit),
-              label: const Text("EDIT DATA"),
-              onPressed: () async {
-                final res = await showDialog<bool>(context: context, builder: (_) => LegendPlayerForm(legend: legend));
-                if (res == true) {
-                  onRefresh();
-                  Navigator.pop(context);
-                }
-              },
-            ),
+
+            if (isStaff)
+              ElevatedButton.icon(
+                icon: const Icon(Icons.edit),
+                label: const Text("EDIT DATA"),
+                onPressed: () async {
+                  final res = await showDialog<bool>(context: context, builder: (_) => LegendPlayerForm(legend: legend));
+                  if (res == true) {
+                    onRefresh();
+                    Navigator.pop(context);
+                  }
+                },
+              ),
           ],
         ),
       ),

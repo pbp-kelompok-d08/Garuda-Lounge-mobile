@@ -78,7 +78,7 @@ class ItemCard extends StatelessWidget {
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()
                 ..showSnackBar(SnackBar(
-                    content: Text("Kamu telah menekan tombol ${item.name}!")));
+                    content: Text("Kamu kamu pergi ke halaman ${item.name}!")));
               _handleNavigation(context);
             },
             child: Padding(
