@@ -90,7 +90,9 @@ Link APK : https://app.bitrise.io/app/6e661066-144f-4b0a-8308-bac1a2489d78/insta
 
 Link APK : https://app.bitrise.io/app/6e661066-144f-4b0a-8308-bac1a2489d78/installable-artifacts/2996760d093f726b/public-install-page/29a7e9099e08cb869f31f2314afbc123 (link terbaru untuk demo)
 
-Link FIGMA : https://www.figma.com/design/XNzG0SDEzs3QQ7SuMVuUoC/GarudaLounge?node-id=0-1&t=Dey5VhTB4bqIc8u5-1 
+Link FIGMA : https://www.figma.com/design/XNzG0SDEzs3QQ7SuMVuUoC/GarudaLounge?node-id=0-1&t=Dey5VhTB4bqIc8u5-1   
+
+Link Video: https://drive.google.com/drive/folders/1NRUtg0Ou9VdFn_7rQ8DDne864kEFwKII  
 
 
 semangaat
