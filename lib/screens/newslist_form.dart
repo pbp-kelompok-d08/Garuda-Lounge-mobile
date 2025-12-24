@@ -76,7 +76,7 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
           status == true || status == "success" || status == "ok";
 
       if (isSuccess) {
-        Navigator.pop(context);
+        //Navigator.pop(context);
         widget.onSuccess?.call();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("News successfully saved!")),
@@ -186,7 +186,11 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
 
                     CheckboxListTile(
                       value: _isFeatured,
-                      onChanged: (v) => _isFeatured = v ?? false,
+                      onChanged: (v) {
+                        setState(() {
+                          _isFeatured = v ?? false;
+                        });
+                      },
                       title: const Text("Featured News"),
                       controlAffinity: ListTileControlAffinity.leading,
                       contentPadding: EdgeInsets.zero,
@@ -209,6 +213,7 @@ class _NewsFormDialogState extends State<NewsFormDialog> {
                           onPressed: _isSubmitting ? null : _submit,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: red,
+                            foregroundColor: Colors.white, // bikin teks pasti kontras
                           ),
                           child: _isSubmitting
                               ? const SizedBox(

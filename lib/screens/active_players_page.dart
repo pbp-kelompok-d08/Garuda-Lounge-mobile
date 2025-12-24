@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:garuda_lounge_mobile/provider/user_provider.dart';
 
 import '../models/player_entry.dart';
 import '../widgets/left_drawer.dart';
@@ -42,6 +43,11 @@ class _ActivePlayersPageState extends State<ActivePlayersPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final request = context.read<CookieRequest>();
+      final userProvider = context.read<UserProvider>();
+
+      // ini tidak jalan kalau sudahpernah fetch
+      userProvider.fetchUserStatus(request);
+
       setState(() {
         _futurePlayers = fetchPlayers(request);
       });
@@ -69,6 +75,8 @@ class _ActivePlayersPageState extends State<ActivePlayersPage> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    final userProvider = context.watch<UserProvider>(); 
+    final isStaff = userProvider.isStaff; // ambil status user dari provider
 
     return Scaffold(
       backgroundColor: cream,
@@ -205,26 +213,28 @@ class _ActivePlayersPageState extends State<ActivePlayersPage> {
                       ),
                     ),
                     const Spacer(),
-                    FilledButton(
-                      style: FilledButton.styleFrom(
-                        backgroundColor: red,
-                        foregroundColor: white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      onPressed: () => _openAddPlayerDialog(request),
 
-                      // TODO ✅ button ini cuma bisa diakses sama admin
-                      child: const Text(
-                        "+ Tambah Pemain",
-                        style: TextStyle(fontWeight: FontWeight.w700),
+                    if (isStaff)
+                      FilledButton(
+                        style: FilledButton.styleFrom(
+                          backgroundColor: red,
+                          foregroundColor: white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onPressed: () => _openAddPlayerDialog(request),
+
+                        // TODO ✅ button ini cuma bisa diakses sama admin
+                        child: const Text(
+                          "+ Tambah Pemain",
+                          style: TextStyle(fontWeight: FontWeight.w700),
+                        ),
                       ),
-                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -243,6 +253,7 @@ class _ActivePlayersPageState extends State<ActivePlayersPage> {
                       final player = filteredPlayers[index];
                       final photoUrl = buildPhotoUrl(player.foto);
                       return PlayerCard(
+                        isStaff: isStaff,
                         player: player,
                         imageUrl: photoUrl,
                         baseUrl: _baseUrl,

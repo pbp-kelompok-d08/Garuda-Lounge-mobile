@@ -60,7 +60,7 @@ class _MatchEntryListPageState extends State<MatchEntryListPage> {
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
     final userProvider = context.watch<UserProvider>(); 
-    final isStaff = userProvider.isStaff; // ambil data dari provider
+    final isStaff = userProvider.isStaff; // ambil status user dari provider
     Future<List<MatchEntry>> futureMatches = fetchMatch(request);
     return Scaffold(
       appBar: AppBar(

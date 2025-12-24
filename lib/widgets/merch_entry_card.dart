@@ -7,6 +7,7 @@ class MerchEntryCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final bool isStaff; // buat cek status user
 
   const MerchEntryCard({
     super.key,
@@ -14,6 +15,7 @@ class MerchEntryCard extends StatelessWidget {
     required this.onTap,
     this.onEdit,
     this.onDelete,
+    required this.isStaff,
   });
 
   @override
@@ -110,41 +112,42 @@ class MerchEntryCard extends StatelessWidget {
 
               // footer action buttons
               //TODO: bagian edit dan delete hanya bisa diakses admin
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        TextButton(
-                          onPressed: onEdit, 
-                          child: const Text(
-                            "Edit",
-                            style: TextStyle(
-                              fontWeight: FontWeight.normal, 
-                              color: black, 
-                              fontSize: 14,
+              if (isStaff)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          TextButton(
+                            onPressed: onEdit, 
+                            child: const Text(
+                              "Edit",
+                              style: TextStyle(
+                                fontWeight: FontWeight.normal, 
+                                color: black, 
+                                fontSize: 14,
+                              ),
                             ),
                           ),
-                        ),
 
-                        TextButton(
-                          onPressed: onDelete, 
-                          child: const Text(
-                            "Delete",
-                            style: TextStyle(
-                              fontWeight: FontWeight.normal, 
-                              color: Color.fromARGB(255, 224, 13, 13),
-                              fontSize: 14,
+                          TextButton(
+                            onPressed: onDelete, 
+                            child: const Text(
+                              "Delete",
+                              style: TextStyle(
+                                fontWeight: FontWeight.normal, 
+                                color: Color.fromARGB(255, 224, 13, 13),
+                                fontSize: 14,
+                              ),
                             ),
                           ),
-                        ),
-                      ]
-                    ),
-                  ],
+                        ]
+                      ),
+                    ],
+                  ),
                 ),
-              ),
             ],
           ),
         ),

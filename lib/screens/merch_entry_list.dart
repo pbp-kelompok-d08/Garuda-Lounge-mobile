@@ -7,6 +7,7 @@ import 'package:garuda_lounge_mobile/widgets/merch_entry_card.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'dart:convert';
+import 'package:garuda_lounge_mobile/provider/user_provider.dart';
 
 class MerchEntryListPage extends StatefulWidget {
   const MerchEntryListPage({super.key});
@@ -16,6 +17,21 @@ class MerchEntryListPage extends StatefulWidget {
 }
 
 class _MerchEntryListPageState extends State<MerchEntryListPage> {
+
+  // kita mau fetch status user sekali saja saat halaman dibuka
+  // pakai addPostFrameCallback karena kita butuh context provider
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+       final request = context.read<CookieRequest>();
+       final userProvider = context.read<UserProvider>();
+       
+       // ini tidak jalan kalau sudahpernah fetch
+       userProvider.fetchUserStatus(request);
+    });
+  }
+
   Future<List<MerchEntry>> fetchMerch(CookieRequest request) async {
     // To connect Android emulator with Django on localhost, use URL http://10.0.2.2/
     // If you using chrome,  use URL http://localhost:8000
@@ -40,6 +56,8 @@ class _MerchEntryListPageState extends State<MerchEntryListPage> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    final userProvider = context.watch<UserProvider>(); 
+    final isStaff = userProvider.isStaff; // ambil status user dari provider
     Future<List<MerchEntry>> futureMerch = fetchMerch(request);
     return Scaffold(
       appBar: AppBar(
@@ -64,29 +82,31 @@ class _MerchEntryListPageState extends State<MerchEntryListPage> {
             child: Row(
               children: [
                 //TODO: hanya bisa diakses oleh admin
-                ElevatedButton(
-                  onPressed: () async {
-                    final result = await showDialog(
-                      context: context,
-                      builder: (context) => const MerchFormPage(),
-                    );
+                if (isStaff) ...[
+                  ElevatedButton(
+                    onPressed: () async {
+                      final result = await showDialog(
+                        context: context,
+                        builder: (context) => const MerchFormPage(),
+                      );
 
-                    // jika result == true, artinya berhasil save, maka refresh halaman
-                    if (result == true) {
-                      setState(() {});
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: red,
-                    foregroundColor: white,
-                    side: BorderSide(color: black),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      // jika result == true, artinya berhasil save, maka refresh halaman
+                      if (result == true) {
+                        setState(() {});
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: red,
+                      foregroundColor: white,
+                      side: BorderSide(color: black),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text("+ Tambah Merch", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                   ),
-                  child: const Text("+ Tambah Merch", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                ),
-                
-                const SizedBox(width: 8),
+                  
+                  const SizedBox(width: 8),
+                ],
 
                 _buildFilterButton('Semua Merch', 'all'),
                 const SizedBox(width: 8),
@@ -94,7 +114,7 @@ class _MerchEntryListPageState extends State<MerchEntryListPage> {
                 const SizedBox(width: 8),
                 _buildFilterButton('Sepatu', 'shoes'),
                 const SizedBox(width: 8),
-                _buildFilterButton('Bola', 'balls'),
+                _buildFilterButton('Bola', 'ball'),
                 const SizedBox(width: 8),
                 _buildFilterButton('Sarung Tangan Kiper', 'gk gloves'),
                 const SizedBox(width: 8),
@@ -150,7 +170,7 @@ class _MerchEntryListPageState extends State<MerchEntryListPage> {
                         
                         return MerchEntryCard(
                           merch: merch,
-                          
+                          isStaff: isStaff,
                           onTap: () {
                             // Navigate to merch detail page
                             Navigator.push(
