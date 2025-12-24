@@ -5,6 +5,7 @@ import 'package:garuda_lounge_mobile/widgets/left_drawer.dart';
 import 'package:garuda_lounge_mobile/screens/news_detail.dart';
 import 'package:garuda_lounge_mobile/widgets/news_entry_card.dart';
 import 'package:garuda_lounge_mobile/screens/newslist_form.dart';
+import 'package:garuda_lounge_mobile/provider/user_provider.dart';
 
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -22,10 +23,25 @@ class _NewsEntryListPageState extends State<NewsEntryListPage> {
   static const Color black = Color(0xFF111111);
 
   // FILTER STATE
-  String _filter = "all"; // all, match, update, rumour, analysis, transfer, exclusive
+  String _filter = "all"; // all, match, update, rumor, analysis, transfer, exclusive
 
   // WAJIB: isi ini dengan userId yang sedang login
   int? currentUserId;
+
+  // kita mau fetch status user sekali saja saat halaman dibuka
+  // pakai addPostFrameCallback karena kita butuh context provider
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+       final request = context.read<CookieRequest>();
+       final userProvider = context.read<UserProvider>();
+       
+       // ini tidak jalan kalau sudahpernah fetch
+       userProvider.fetchUserStatus(request);
+    });
+  }
+
 
   Future<List<NewsEntry>> fetchNews(CookieRequest request) async {
     final response = await request.get('https://muhammad-farrel46-garudalounge.pbp.cs.ui.ac.id/news/json/');
@@ -57,6 +73,8 @@ class _NewsEntryListPageState extends State<NewsEntryListPage> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    final userProvider = context.watch<UserProvider>(); 
+    final isStaff = userProvider.isStaff; // ambil status user dari provider
 
     return Scaffold(
       backgroundColor: cream,
@@ -223,28 +241,29 @@ class _NewsEntryListPageState extends State<NewsEntryListPage> {
                                   ),
 
                                   // TAMBAH BERITA
-                                  _PillButton(
-                                    label: "+ Tambah Berita",
-                                    filled: true,
-                                    onTap: () async {
-                                      await showDialog(
-                                        context: context,
-                                        barrierDismissible: true,
-                                        builder: (dialogContext) {
-                                          return NewsFormDialog(
-                                            request: request,
-                                            onSuccess: () {
-                                              if (Navigator.of(dialogContext)
-                                                  .canPop()) {
-                                                Navigator.of(dialogContext).pop();
-                                              }
-                                              setState(() {});
-                                            },
-                                          );
-                                        },
-                                      );
-                                    },
-                                  ),
+                                  if (isStaff)
+                                    _PillButton(
+                                      label: "+ Tambah Berita",
+                                      filled: true,
+                                      onTap: () async {
+                                        await showDialog(
+                                          context: context,
+                                          barrierDismissible: true,
+                                          builder: (dialogContext) {
+                                            return NewsFormDialog(
+                                              request: request,
+                                              onSuccess: () {
+                                                if (Navigator.of(dialogContext)
+                                                    .canPop()) {
+                                                  Navigator.of(dialogContext).pop();
+                                                }
+                                                setState(() {});
+                                              },
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
                                 ],
                               ),
                             ],

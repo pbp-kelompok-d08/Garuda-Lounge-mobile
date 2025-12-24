@@ -114,7 +114,7 @@ class _MerchEntryListPageState extends State<MerchEntryListPage> {
                 const SizedBox(width: 8),
                 _buildFilterButton('Sepatu', 'shoes'),
                 const SizedBox(width: 8),
-                _buildFilterButton('Bola', 'balls'),
+                _buildFilterButton('Bola', 'ball'),
                 const SizedBox(width: 8),
                 _buildFilterButton('Sarung Tangan Kiper', 'gk gloves'),
                 const SizedBox(width: 8),
